@@ -1,4 +1,7 @@
 # coding: utf-8
+# 封装其他模块对模型的修改接口
+# 外部模块只能通过本文件的函数对模型进行修改
+
 from global_data import SUCCESS
 
 
