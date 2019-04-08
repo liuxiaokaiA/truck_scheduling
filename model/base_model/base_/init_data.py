@@ -13,7 +13,7 @@ class Init_data(object):
         # self.base_position = pd.read_csv('generate/base_position0315.csv')
         # self.shop_position = pd.read_csv('generate/city_position0315.csv')
         # self.distance = pd.read_csv('generate/distance0315.csv')
-        # self.trunk = pd.read_csv("generate/trunk.csv")
+        # self.truck = pd.read_csv("generate/truck.csv")
         # self.base_to_index = pd.read_csv("generate/base_to_index.csv")
         # self.city_to_index = pd.read_csv("generate/city_to_index.csv")
         pass

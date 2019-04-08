@@ -34,7 +34,7 @@ rules = {
 # 策略执行等级
 levels = [
     # 返程板车优先
-    'get_trunk_return',
+    'get_truck_return',
     # 顺路订单凑整运输
     'get_order_nearby',
     # 散单拼单

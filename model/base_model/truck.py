@@ -12,7 +12,7 @@ class Truck(Path, Truck_Position, TruckInquiryAPI):
         super(Truck, self).__init__()
         # id为其车牌号
         self.id = id
-        self.type = Truck_status.TRUNK_IN_ORDER
+        self.type = Truck_status.TRUCK_IN_ORDER
         # 其他基本信息
 
         # 保存板车历史运输信息

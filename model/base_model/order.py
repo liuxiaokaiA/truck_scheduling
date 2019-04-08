@@ -13,7 +13,7 @@ class Order(object):
         self.base = Bases[base_id]
         self.destination = Destinations[dest_id]
 
-        self.trunk = None
+        self.truck = None
 
         # 起始距离目的地小于50公里，置为True
         self.not_to_send = False
