@@ -1,5 +1,7 @@
 # coding: utf-8
-# 本文件封装模型数据的获取，供algorithm/base_data/compute_data.py调用
+
+from global_data import SUCCESS
+# 本文件封装模型数据的获取，供algorithm/data/compute_data.py调用
 # 提供模型的对外接口
 # 其他模块不会调用base_model文件夹内的任何东西
 # 其他模块均通过本文件来获取模型的数据
@@ -77,3 +79,14 @@ def get_compute_data():
     orders = __get_orders()
     destinations = __get_destinations()
     return trucks, bases, orders, destinations
+
+
+def model_is_near(truck_id, base, d):
+    result = SUCCESS
+
+    return result
+
+
+def model_truck_take_orders_cost(truck, orders):
+    cost = 0
+    return cost
