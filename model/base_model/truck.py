@@ -1,25 +1,36 @@
 # coding: utf-8
 from base_.path import Path
-from base_.position import Truck_Position
+from base_.position import Position
 from base_.type import Truck_status
 
 from global_data import Trucks
 from model.base_model.base_.truck_inquiry_api import TruckInquiryAPI
 
 
-class Truck(Path, Truck_Position, TruckInquiryAPI):
+class Truck(Path, Position, TruckInquiryAPI):
     def __init__(self, id):
         super(Truck, self).__init__()
-        # id为其车牌号
+        self.inquiry = TruckInquiryAPI()
+        # 板车id
         self.id = id
-        self.type = Truck_status.TRUCK_IN_ORDER
-        # 其他基本信息
+        #
 
-        # 保存板车历史运输信息
-        # key为发车起始时间，value待定
+        # 板车归属base
+        self.base = self.inquiry.get_truck_info()
+        # 板车当前状态
+        self.status = Truck_status.TRUCK_IN_ORDER
+        # 板车容量
+        self.capacity = 8
+        # 板车当前所在网点
+        self.current_base = None
+        # 板车车队信息
+        self.fleet = None
+        # 板车历史信息
         self.history = {}
-
-        Trucks[id] = self
+        # 板车顺数订单信息
+        self.orders = []
+        # 板车运输路线信息
+        self.city_list = []
 
     def get_id(self):
         return self.id

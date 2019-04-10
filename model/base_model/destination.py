@@ -1,5 +1,6 @@
 # coding: utf-8
 from global_data import Destinations
+from model.base_model.base_.init_data import Init_data
 from model.base_model.base_.type import DESTINATION
 from model.base_model.base_.inquiry_api import InquiryAPI
 from model.base_model.base_.position import Position
@@ -13,11 +14,7 @@ class Destination(Position, InquiryAPI):
 
     def __init__(self, id):
         super(Destination, self).__init__()
-        # 用中文名字做 id
         self.id = id
-        # 其他变量
-
-        Destinations[id] = self
-
-    def get_id(self):
-        return self.id
+        self.set_position(self.get_city_position())
+        self.name = self.get_city_name()
+        self.near_destination = self.get_near_destination()

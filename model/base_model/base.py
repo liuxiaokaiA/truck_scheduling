@@ -1,5 +1,6 @@
 # coding: utf-8
 from global_data import Bases
+from model.base_model.base_.init_data import Init_data
 from model.base_model.base_.type import BASE
 from model.base_model.base_.inquiry_api import InquiryAPI
 from model.base_model.base_.position import Position
@@ -13,11 +14,18 @@ class Base(Position, InquiryAPI):
 
     def __init__(self, id):
         super(Base, self).__init__()
-        # 用中文名字做 id
         self.id = id
-        # 其他变量
+        self.set_position(self.get_city_position())
+        self.name = self.get_city_name()
+        self.near_base = self.get_near_base()
+        self.near_destination = self.get_near_destination()
+        self.local_truck = []
+        self.other_truck = []
+        self.orders = []
 
-        Bases[id] = self
+    def update_base_info(self, truck_list, order_list):
+        self.local_truck, self.other_truck = self.get_in_order_truck(truck_list)
+        for order in order_list:
+            if order.base == self.id:
+                self.orders.append(order)
 
-    def get_id(self):
-        return self.id
