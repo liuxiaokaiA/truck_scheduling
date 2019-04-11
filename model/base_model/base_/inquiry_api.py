@@ -60,7 +60,7 @@ class InquiryAPI(DataInquiry):
     def get_in_order_truck(self, truck_list):
         local_truck = []
         other_truck = []
-        if type != BASE:
+        if self.type != BASE:
             return local_truck, other_truck
         for truck in truck_list:
             if truck.status == Truck_status.TRUCK_IN_ORDER and truck.base == self.id:
@@ -68,6 +68,16 @@ class InquiryAPI(DataInquiry):
             elif truck.status == Truck_status.TRUCK_IN_ORDER_DESTINATION and truck.current_base == self.id:
                 other_truck.append(truck.id)
         return local_truck, other_truck
+
+    def get_nearest_base(self):
+        nearest_distance = 9999999
+        base = None
+        if self.type == DESTINATION:
+            for index in range(self.base_num):
+                if self.get_distance(base_id_1=index, destination_id_1=self.id) < nearest_distance:
+                    nearest_distance = self.get_distance(base_id_1=index, destination_id_1=self.id)
+                    base = index
+        return base
 
     def get_near_truck(self, truck_list, distance=200):
         pass

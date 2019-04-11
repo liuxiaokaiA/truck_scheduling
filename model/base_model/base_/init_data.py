@@ -19,7 +19,6 @@ class Init_data(object):
         self.truck = pd.read_csv('model/base_model/base_/base_data/truck.csv')
         self.base_to_index = pd.read_csv('model/base_model/base_/base_data/base_to_index.csv')
         self.city_to_index = pd.read_csv('model/base_model/base_/base_data/city_to_index.csv')
-        self.order = pd.read_csv()
 
     def __new__(cls, *args, **kwargs):
         if not hasattr(Init_data, "_instance"):

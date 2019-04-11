@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+from global_data import Orders, Destinations, Bases
 
 
 class Path(object):
@@ -14,5 +15,20 @@ class Path(object):
         self.orders = []
         self.times = []
 
-    def get_the_best_path(self):
-        pass
+    def get_the_best_path(self, truck, orders):
+        if orders and orders[0].base != truck.current_base:
+            self.bases.append(truck.current_base)
+        for order in orders:
+            self.bases.append(order.base)
+            self.destinations.append(order.destination)
+        self.path = self.bases + self.destinations
+        if orders and Destinations[orders[-1].destination].calculate_distance(Bases[truck.base]) < 200:
+            self.future_base = truck.base
+            self.path.append(truck.base)
+        elif orders:
+            self.future_base = self.path[-1]
+
+
+
+
+

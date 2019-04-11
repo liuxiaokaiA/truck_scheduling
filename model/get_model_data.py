@@ -70,7 +70,7 @@ def update_data():
     for base in Bases:
         base.update_base_info(Trucks,Orders)
     for truck in Trucks:
-        truck.
+        truck.update()
 
 
 def get_compute_data():

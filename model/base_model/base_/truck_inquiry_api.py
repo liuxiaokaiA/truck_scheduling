@@ -7,12 +7,13 @@ from .data_inquiry import DataInquiry
 # 继承自DataInquiry
 # DataInquiry封装了基本的数据查询方法
 class TruckInquiryAPI(DataInquiry):
+    id = None
 
-    def __init__(self, id):
-        self.id = id
+    def __init__(self):
         super(TruckInquiryAPI, self).__init__()
         self.base, self.current_base, self.license, self.day, self.fleet = self.get_truck_info(self.id)
 
     # 封装truck调用的查询函数
-    def get_near_base_station(self, distance=200):
-
+    def get_near_base_station(self, position, base_list, distance=200):
+        for base in base_list:
+            position.calculate_distance(base_list.position)

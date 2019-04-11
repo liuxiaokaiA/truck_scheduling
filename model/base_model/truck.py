@@ -13,24 +13,28 @@ class Truck(Path, Position, TruckInquiryAPI):
         self.inquiry = TruckInquiryAPI()
         # 板车id
         self.id = id
-        #
-
-        # 板车归属base
-        self.base = self.inquiry.get_truck_info()
         # 板车当前状态
         self.status = Truck_status.TRUCK_IN_ORDER
         # 板车容量
         self.capacity = 8
-        # 板车当前所在网点
-        self.current_base = None
-        # 板车车队信息
-        self.fleet = None
         # 板车历史信息
         self.history = {}
         # 板车顺数订单信息
         self.orders = []
         # 板车运输路线信息
         self.city_list = []
+        # 板车预计到达时间
+        self.time_list = []
 
-    def get_id(self):
-        return self.id
+    def update(self):
+        pass
+
+    def add_orders(self, order_list):
+        self.orders = order_list
+
+    def add_paths(self):
+        if not self.orders:
+            return
+
+    def update(self):
+        pass

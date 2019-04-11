@@ -150,4 +150,3 @@ class DataInquiry(object):
         :return: 板车的数目
         """
         return len(self.init_data.truck) - 1
-

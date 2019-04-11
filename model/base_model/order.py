@@ -5,7 +5,6 @@ from global_data import Orders, Bases, Destinations
 # 订单类，成员变量都换成object
 class Order(object):
     def __init__(self, id, base, destination, delay_time):
-        super(Order, self).__init__()
         self.id = id
         self.base = base
         self.destination = destination
@@ -28,4 +27,3 @@ class Order(object):
             self.class_of_delay_time = 3
         else:
             print('delay_time error!!,order id: %s' % str(self.id))
-
