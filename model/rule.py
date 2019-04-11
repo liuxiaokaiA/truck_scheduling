@@ -25,10 +25,13 @@ rules = {
             'level': 3,
         }
     },
+    'must_take_order_level': (3, 11),
     # 板车最少运输订单个数
     'truck_take_order_min': 8,
     # 板车异地滞留最长时间
     'truck_delay_max': MAX,
+    # truck最远接单距离
+    'max_distance': 500,
 }
 
 # 策略执行等级
