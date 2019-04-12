@@ -21,19 +21,15 @@ def model_init():
     for index in range(base_num):
         temp_base = Base(index)
         Bases.append(temp_base)
-        print index
 
     for index in range(destination_num):
         temp_destination = Destination(index)
         Destinations.append(temp_destination)
-        print index
 
     for index in range(truck_num):
-        print index
         temp_trunk = Truck(index)
         Trucks.append(temp_trunk)
 
     init_order()
     for base in Bases:
         base.update_base_info(order_list=Orders, truck_list=Trucks)
-        print base.id
