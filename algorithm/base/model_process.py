@@ -14,7 +14,7 @@ log = logging.getLogger('default')
 
 class ModelProcess(object):
     def __init__(self):
-        pass
+        super(ModelProcess, self).__init__()
 
     def truck_take_orders(self, truck, del_order):
         result = model_truck_take_orders(truck, del_order)
