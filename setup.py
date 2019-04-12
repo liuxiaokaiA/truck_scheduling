@@ -10,6 +10,7 @@ setup(
         'pandas',
         'deap',
         'scoop',
+        'numpy',
     ],
     classifiers=[
         'Programming Language :: Python',

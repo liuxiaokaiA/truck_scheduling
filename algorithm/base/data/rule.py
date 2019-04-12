@@ -7,10 +7,9 @@ from model.rule import rules, levels
 
 class Rule(object):
     def __init__(self):
-        self.order_level = {
-            rules['order_level']['level']: (rules['order_level']['start'],
-                                            rules['order_level']['end'])
-        }
+        self.order_level = {}
+        for item in rules['order_level']:
+            self.order_level[item['level']] = (item['start'], item['end'])
         self.order_mast_take = {
             'level': rules['must_take_order_level'][0],
             'start': rules['must_take_order_level'][1],
