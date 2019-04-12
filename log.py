@@ -79,7 +79,7 @@ LOGGING = {
         'debug': {
             'level': 'DEBUG',
             'class': 'log.MultiProcessSafeDailyRotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, '../logs/debug.log'),
+            'filename': os.path.join(BASE_DIR, 'log/debug.log'),
             'when': 'midnight',
             'formatter': 'default',
             'filters': ['debug_only'],
@@ -87,14 +87,14 @@ LOGGING = {
         'error': {
             'level': 'ERROR',
             'class': 'log.MultiProcessSafeDailyRotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, '../logs/error.log'),
+            'filename': os.path.join(BASE_DIR, 'log/error.log'),
             'when': 'midnight',
             'formatter': 'default',
         },
         'info': {
             'level': 'INFO',
             'class': 'log.MultiProcessSafeDailyRotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, '../logs/info.log'),
+            'filename': os.path.join(BASE_DIR, 'log/info.log'),
             'when': 'midnight',
             'formatter': 'default',
             'filters': ['info_only'],
@@ -102,7 +102,7 @@ LOGGING = {
         'warn': {
             'level': 'WARN',
             'class': 'log.MultiProcessSafeDailyRotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, '../logs/warn.log'),
+            'filename': os.path.join(BASE_DIR, 'log/warn.log'),
             'when': 'midnight',
             'formatter': 'default',
             'filters': ['warn_only'],
@@ -169,7 +169,7 @@ class MyLogging(object):
         # 2. To get the absolute path of the log file.
         # Log file is stored under the 'log' folder. If it not existed,
         # create it auto.
-        dir_path = os.path.join(os.path.dirname(__file__), '../logs')
+        dir_path = os.path.join(os.path.dirname(__file__), 'log')
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
         # 3. Loading the config, and make it effect.

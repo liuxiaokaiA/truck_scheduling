@@ -1,8 +1,8 @@
 # coding: utf-8
 import logging
 
-from utils.log import MyLogging
 from algorithm.truck_scheduling import TruckScheduling
+from log import MyLogging
 
 
 def init():
