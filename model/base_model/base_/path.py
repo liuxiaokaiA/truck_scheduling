@@ -6,7 +6,6 @@ from global_data import Orders, Destinations, Bases, Trucks
 from model.base_model.base import Base
 from model.base_model.base_.type import Truck_status
 from model.base_model.destination import Destination
-from model.base_model.truck import Truck
 
 
 class Path(object):
