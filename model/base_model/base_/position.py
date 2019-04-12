@@ -2,24 +2,19 @@
 
 
 # 网点，4S店，车辆都有该属性，抽象出来
+from cmath import sqrt
+
+
 class Position(object):
     x = None
     y = None
 
     def __init__(self):
-        pass
+        super(Position, self).__init__()
 
+    def set_position(self, x, y):
+        self.x = x
+        self.y = y
 
-# truck的position基类
-class Truck_Position(Position):
-    speed = 0
-    current_base = None
-
-    def __init__(self):
-        super(Truck_Position, self).__init__()
-
-    def get_position(self):
-        return self.x, self.y
-
-    def set_position(self):
-        pass
+    def calculate_distance(self, position):
+        return sqrt(pow(self.x - position.x, 2) + pow(self.y - position.y, position.y))
