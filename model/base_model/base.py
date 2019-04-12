@@ -10,12 +10,13 @@ from model.base_model.base_.position import Position
 # Position保存该base位置信息变量
 # Inquiry封装位置查询的方法
 class Base(Position, InquiryAPI):
-    type = BASE
 
     def __init__(self, id):
         super(Base, self).__init__()
         self.id = id
-        self.set_position(self.get_city_position())
+        self.type = BASE
+        temp_x, temp_y = self.get_city_position()
+        self.set_position(temp_x, temp_y)
         self.name = self.get_city_name()
         self.near_base = self.get_near_base()
         self.near_destination = self.get_near_destination()

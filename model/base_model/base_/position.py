@@ -10,7 +10,7 @@ class Position(object):
     y = None
 
     def __init__(self):
-        pass
+        super(Position, self).__init__()
 
     def set_position(self, x, y):
         self.x = x

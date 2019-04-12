@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from global_data import SUCCESS
+from global_data import SUCCESS, FAILED
 # 本文件封装模型数据的获取，供algorithm/data/compute_data.py调用
 # 提供模型的对外接口
 # 其他模块不会调用base_model文件夹内的任何东西
@@ -12,6 +12,7 @@ from global_data import SUCCESS
 # trucks和bases里的truck对应上
 # 只给可用运力即可
 from global_data import Bases, Destinations, Orders, Trucks
+from model.base_model.base_.path import Path
 
 
 def __get_trucks():
@@ -68,7 +69,7 @@ def __get_destinations():
 
 def update_data():
     for base in Bases:
-        base.update_base_info(Trucks,Orders)
+        base.update_base_info(Trucks, Orders)
     for truck in Trucks:
         truck.update()
 
@@ -83,10 +84,11 @@ def get_compute_data():
 
 def model_is_near(truck_id, base, d):
     result = SUCCESS
-
+    if Trucks[truck_id].calculate_distance(Bases[base]) > d:
+        result = FAILED
     return result
 
 
 def model_truck_take_orders_cost(truck, orders):
-    cost = 0
+    cost = Path.get_cost_trunk_in_order_dest(truck,orders)
     return cost

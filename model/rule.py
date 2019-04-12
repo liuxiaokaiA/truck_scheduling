@@ -5,7 +5,7 @@ MAX = 100000
 
 rules = {
     # order的优先级划分
-    'order_level': {
+    'order_level': [
         {
             # 0-5 天的order
             'start': 0,
@@ -24,7 +24,7 @@ rules = {
             'end': MAX,
             'level': 3,
         }
-    },
+    ],
     'must_take_order_level': (3, 11),
     # 板车最少运输订单个数
     'truck_take_order_min': 8,

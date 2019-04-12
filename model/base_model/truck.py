@@ -9,10 +9,9 @@ from model.base_model.base_.truck_inquiry_api import TruckInquiryAPI
 
 class Truck(Path, Position, TruckInquiryAPI):
     def __init__(self, id):
-        super(Truck, self).__init__()
-        self.inquiry = TruckInquiryAPI()
         # 板车id
         self.id = id
+        super(Truck, self).__init__()
         # 板车当前状态
         self.status = Truck_status.TRUCK_IN_ORDER
         # 板车容量
@@ -31,10 +30,16 @@ class Truck(Path, Position, TruckInquiryAPI):
 
     def add_orders(self, order_list):
         self.orders = order_list
+        self.status = Truck_status.TRUCK_ON_ROAD
+        self.add_paths()
 
     def add_paths(self):
         if not self.orders:
             return
 
-    def update(self):
+    def calculate_cost(self, orders):
         pass
+
+    @staticmethod
+    def truck_cost(car_number):
+        return 1.0 * (1 + car_number * 0.05)

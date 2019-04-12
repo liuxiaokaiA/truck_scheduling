@@ -16,17 +16,16 @@ class InquiryAPI(DataInquiry):
     type = None
     id = None
 
-    def __init__(self, type):
+    def __init__(self):
         super(InquiryAPI, self).__init__()
-        self.type = type
 
     def get_city_position(self):
         return self.get_position(self.type, self.id)
 
     def get_city_name(self):
-        if type == BASE:
+        if self.type == BASE:
             return self.get_id_to_base(self.id)
-        elif type == DESTINATION:
+        elif self.type == DESTINATION:
             return self.get_id_to_city(self.id)
         else:
             return None

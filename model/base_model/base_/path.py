@@ -1,9 +1,16 @@
 # -*- encoding: utf-8 -*-
+import sys
+from itertools import permutations
+
 from global_data import Orders, Destinations, Bases
+from model.base_model.base import Base
+from model.base_model.base_.type import Truck_status
+from model.base_model.destination import Destination
 
 
 class Path(object):
     def __init__(self):
+        super(Path, self).__init__()
         self.bases = []
         self.destinations = []
         self.now = 0
@@ -27,8 +34,146 @@ class Path(object):
             self.path.append(truck.base)
         elif orders:
             self.future_base = self.path[-1]
+        self.path = self.sort_position_list(truck, self.path, orders)
 
+    def sort_position_list(self, truck, position_list, orders):
+        if len(position_list) == 1:
+            return position_list
+        base_list = []
+        destination_list = []
+        all_list = []
+        if len(position_list) < 11:
+            for temp_list in permutations(position_list[1:]):
+                if isinstance(list(temp_list)[-1], Destination):
+                    all_list.append(position_list[0:1] + list(temp_list))
+        else:
+            for index in range(len(position_list)):
+                if isinstance(position_list[index], Destination):
+                    base_list = position_list[0:index]
+                    destination_list = position_list[index:]
+                    break
+            for temp1 in permutations(destination_list):
+                if base_list:
+                    for temp2 in permutations(base_list[1:]):
+                        all_list.append(base_list[0:1] + list(temp2 + temp1))
+                else:
+                    all_list.append(list(temp1))
+        nearest_list = position_list
+        nearest_distance = sys.maxint
 
+        if truck.status == Truck_status.TRUCK_IN_ORDER:
+            for current_index, current_list in enumerate(all_list):
+                if current_index > 10000:
+                    break
+                last_position_id = current_list[-1].nearest.base
+                # last_distance = current_list[-1].calculate_distance(Bases[last_position_id])
+                sum_distance = self.calculate_cost(truck, orders, current_list, last_position_id)
+                if sum_distance < nearest_distance:
+                    nearest_list = current_list
+                    nearest_distance = sum_distance
+        elif truck.status == Truck_status.TRUCK_IN_ORDER_DESTINATION:
+            for current_index, current_list in enumerate(all_list):
+                sum_distance = self.calculate_cost(truck, orders, current_list, truck.base)
+                if current_index > 10000:
+                    break
+                if sum_distance < nearest_distance:
+                    nearest_list = current_list
+                    nearest_distance = sum_distance
+                # current_list.remove(current_list[0])
 
+        elif truck.status == Truck_status.TRUCK_ON_ROAD:
+            pass
+            # for current_list in all_list:
+            #     last_position, last_distance = self.inquiry_info.inquiry_nearest_base_station(current_list[-1].d_id)
+            #     sum_distance = last_distance
+            #     sum_distance += self.trunk_position.get_position_distance(current_list[0].position)
+            #     for index in range(len(current_list) - 1):
+            #         sum_distance += self.inquiry_info.inquiry_distance(current_list[index], current_list[index + 1])
+            #     if sum_distance < nearest_distance:
+            #         nearest_list = current_list
+            #         nearest_distance = sum_distance
 
+        for index in range(len(nearest_list) - 1):
+            if isinstance(nearest_list[index], Base) and isinstance(nearest_list[index + 1], Destination):
+                base_name = truck.get_id_to_base(nearest_list[index].id)
+                city_name = truck.get_id_to_city(nearest_list[index + 1].id)
+                if base_name == city_name:
+                    nearest_list[index], nearest_list[index + 1] = nearest_list[index + 1], nearest_list[index]
+        return nearest_list
+
+    def calculate_cost(self, truck, order_list, position_list, last_position_id, current_low_cost=sys.maxint):
+        if not position_list:
+            print "position_list is null"
+            return
+        temp_order_list = []
+        if len(position_list) > 1 and isinstance(position_list[-1], Base):
+            return sys.maxint
+        cost = 0
+        for index, position in enumerate(position_list):
+            if index > 0:
+                cost += position_list[index - 1].calculate_ditance(position) * truck.trunk_cost(
+                    len(temp_order_list))
+            if isinstance(position, Base):
+                for order in order_list:
+                    if order.base == position.id:
+                        if len(temp_order_list) < 8:
+                            temp_order_list.append(order)
+            else:
+                for order in temp_order_list:
+                    if order.destination == position.d_id:
+                        temp_order_list.remove(order)
+        if len(temp_order_list) > 0:
+            return sys.maxint
+        cost += position_list[-1].calculate_distance(Base[last_position_id]) * truck.trunk_cost(
+            len(temp_order_list))
+        return cost
+
+    # 终点去接单
+    @staticmethod
+    def get_cost_trunk_in_order_dest(trunk, orders):
+        trunk_base_id = trunk.trunk_base_id
+        trunk_base = Bases[trunk_base_id]
+        bases = {}
+        is_must = 0
+        for order_id in orders:
+            Orders[order_id]['is_loading'] += 1
+            if Orders[order_id]['is_loading'] > 1:
+                return sys.maxint
+            order = Orders[order_id]['object']
+            if order.delay_time > 10:
+                is_must = 1
+            if order.base not in bases:
+                bases[order.base] = []
+            bases[order.base].append(order)
+        if not is_must and len(orders) not in (0, 8):
+            return sys.maxint
+        car_num = 0
+        temp_position = trunk.trunk_position
+        return_cost = 0
+        for base_id in bases:
+            base = Bases[base_id]
+            if base.position == trunk.trunk_position:
+                continue
+            return_cost += trunk.trunk_cost_one_road(car_num, temp_position, base.position)
+            temp_position = base.position
+            car_num += len(bases[base_id])
+
+        dests = {}
+        for order_id in orders:
+            order = Orders[order_id]['object']
+            if order.destination not in dests:
+                dests[order.destination] = []
+            dests[order.destination].append(order)
+
+        # 可以优化
+        for dest_id in dests:
+            dest = Destinations[dest_id]
+            return_cost += trunk.trunk_cost_one_road(car_num, temp_position, dest.position)
+            temp_position = dest.position
+            car_num -= len(dests[dest_id])
+
+        # 运完回去
+        # if len(orders) != 0:
+        #     return_cost += trunk.trunk_cost_one_road(0, temp_position, trunk_base.position)
+        return return_cost
 

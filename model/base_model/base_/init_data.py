@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+import json
 import threading
 import pandas as pd
 import logging
@@ -19,6 +20,7 @@ class Init_data(object):
         self.truck = pd.read_csv('model/base_model/base_/base_data/truck.csv')
         self.base_to_index = pd.read_csv('model/base_model/base_/base_data/base_to_index.csv')
         self.city_to_index = pd.read_csv('model/base_model/base_/base_data/city_to_index.csv')
+        self.order_info = json.load(open('model/base_model/base_/base_data/orders.txt', 'r'))
 
     def __new__(cls, *args, **kwargs):
         if not hasattr(Init_data, "_instance"):
@@ -26,3 +28,4 @@ class Init_data(object):
                 if not hasattr(Init_data, "_instance"):
                     Init_data._instance = object.__new__(cls)
         return Init_data._instance
+
