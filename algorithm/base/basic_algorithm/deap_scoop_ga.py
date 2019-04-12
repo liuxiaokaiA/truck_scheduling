@@ -24,6 +24,7 @@ class DeapScoopGA(object):
 
     def __init__(self, max_=10, gene_len=100, pop_count=500, mutate=0.05,
                  NGEN=40, FREQ=5, NISLES=5, mutpb=0.2, cxpb=0.5):
+        super(DeapScoopGA, self).__init__()
         # 每位变化最大值，包括
         self.max_ = max_
         # 基因长度

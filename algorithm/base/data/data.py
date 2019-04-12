@@ -16,6 +16,9 @@ from model.get_model_data import get_compute_data, model_is_near, model_truck_ta
 class Base(object):
     bases = {}
 
+    def __init__(self):
+        super(Base, self).__init__()
+
     def get_base_near_base(self, base):
         near_base = copy.deepcopy(self.bases[base]['near_base'])
         if base not in near_base:
@@ -64,6 +67,9 @@ class Base(object):
 class Truck(object):
     trucks = {}
 
+    def __init__(self):
+        super(Truck, self).__init__()
+
     def get_truck_base(self, truck):
         return self.trucks[truck]['base']
 
@@ -76,6 +82,9 @@ class Truck(object):
 
 class Order(object):
     orders = {}
+
+    def __init__(self):
+        super(Order, self).__init__()
 
     def get_order_dest(self, order):
         return self.orders[order]['destination']
@@ -92,6 +101,9 @@ class Order(object):
 
 class Destination(object):
     destinations = {}
+
+    def __init__(self):
+        super(Destination, self).__init__()
 
     # 目的地附近目的地,包含本dest
     def get_dest_near_dest(self, dest):

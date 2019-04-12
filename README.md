@@ -64,7 +64,7 @@ Requirement
 	│   │   └── truck.py         # 板车模型
 	│   ├── get_model_data.py    # 模型对外提供数据获取接口
 	│   ├── modify_model.py      # 模型对外提供修改接口
-	│   ├── output.py  	         # 模型对外提供输出数据获取接口
+	│   ├── output.py            # 模型对外提供输出数据获取接口
 	│   └── rule.py              # 模型对外提供计算规则接口
 	├── output                   # 输出模块
 	├── tests                    # 测试模块
