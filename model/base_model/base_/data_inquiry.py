@@ -8,7 +8,6 @@ from model.base_model.base_.type import DESTINATION, BASE
 import logging
 
 log = logging.getLogger('default')
-init_data = Init_data()
 
 
 # 封装基础的数据查询方法，提供基础的查询
@@ -19,16 +18,9 @@ class DataInquiry(object):
     def __init__(self):
         super(DataInquiry,self).__init__()
         self.init_data = Init_data()
-        self.base_num = self.__calculate_base_num()
-        self.destination_num = self.__calculate_destination_num()
-        self.truck_num = self.__calculate_truck_num()
-
-    # def __new__(cls, *args, **kwargs):
-    #     if not hasattr(DataInquiry, "_instance"):
-    #         with DataInquiry._instance_lock:
-    #             if not hasattr(DataInquiry, "_instance"):
-    #                 DataInquiry._instance = object.__new__(cls)
-    #     return DataInquiry._instance
+        self.base_num = self.init_data.get_base_num()
+        self.destination_num = self.init_data.get_destination_num()
+        self.truck_num = self.init_data.get_truck_num()
 
     def get_position(self, type, id):
         """
@@ -40,26 +32,19 @@ class DataInquiry(object):
         if type == BASE:
             return self.init_data.base_position['x'][id], self.init_data.base_position['y'][id]
         elif type == DESTINATION:
+            id = id - self.base_num
             return self.init_data.destination_position['x'][id], self.init_data.destination_position['y'][id]
         else:
             log.error("DataInquiry get_position : wrong type")
             return 0, 0
 
-    def get_distance(self, base_id_1=None, base_id_2=None, destination_id_1=None, destination_id_2=None):
+    def get_distance(self, id_1=None, id_2=None):
         """
         用于初始化网点和4S店的距离信息，查询网点和4S店信息时，只能输入base_id_1和destination_id_1
-        :param base_id_1: 网点 1 的id
-        :param base_id_2: 网点 2 的id
-        :param destination_id_1: 4S店 1 的id
-        :param destination_id_2: 4S店 2 的id
         :return: 返回距离
         """
-        if base_id_1 is not None and base_id_2 is not None and base_id_1 < self.base_num and base_id_2 < self.base_num:
-            return self.init_data.distance.values[base_id_1, base_id_2]
-        elif destination_id_1 is not None and destination_id_2 is not None and destination_id_1 < self.destination_num and destination_id_2 < self.destination_num:
-            return self.init_data.distance.values[destination_id_1 + 60, destination_id_2 + 60]
-        elif base_id_1 is not None and destination_id_1 is not None and base_id_1 < self.base_num and destination_id_1 < self.destination_num:
-            return self.init_data.distance.values[base_id_1, destination_id_1 + 60]
+        if id_1 is not None and id_2 is not None:
+            return self.init_data.distance.values[id_1, id_2]
         else:
             log.error('DataInquiry, get_distance : Error id')
             return 0
@@ -114,41 +99,7 @@ class DataInquiry(object):
         :param id:4s店id
         :return: 4s店中文字符串
         """
+        id -= self.base_num
         return self.init_data.city_to_index.values[id][0]
 
-    def get_base_num(self):
-        """
-        :return: 网点数目
-        """
-        return self.base_num
-
-    def get_destination_num(self):
-        """
-        :return: 4s店数目
-        """
-        return self.destination_num
-
-    def get_truck_num(self):
-        """
-        :return: 板车的数目
-        """
-        return self.truck_num
-
-    def __calculate_base_num(self):
-        """
-        :return: 网点数目
-        """
-        return len(self.init_data.base_to_index)
-
-    def __calculate_destination_num(self):
-        """
-        :return: 4s店数目
-        """
-        return len(self.init_data.city_to_index)
-
-    def __calculate_truck_num(self):
-        """
-        :return: 板车的数目
-        """
-        return len(self.init_data.truck)
 

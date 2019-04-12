@@ -15,8 +15,7 @@ class Destination(Position, InquiryAPI):
     def __init__(self, id):
         super(Destination, self).__init__()
         self.id = id
-        temp_x, temp_y = self.get_city_position()
-        self.set_position(temp_x,temp_y)
+        self.x, self.y = self.get_city_position()
         self.name = self.get_city_name()
         self.near_destination = self.get_near_destination()
         self.nearest_base = self.get_nearest_base()

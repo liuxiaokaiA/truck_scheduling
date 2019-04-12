@@ -1,8 +1,10 @@
 # coding: utf-8
 import json
 
-from global_data import base_num, Bases, destination_num, Destinations, truck_num, Trucks, Orders
+from global_data import Bases, Destinations, Trucks, Orders
 from model.base_model.base import Base
+from model.base_model.base_.data_inquiry import DataInquiry
+from model.base_model.base_.init_data import Init_data
 from model.base_model.destination import Destination
 from model.base_model.order import Order
 from model.base_model.truck import Truck
@@ -18,12 +20,17 @@ def init_order():
 
 
 def model_init():
+    init_data = Init_data()
+    base_num = init_data.get_base_num()
+    destination_num = init_data.get_destination_num()
+    truck_num = init_data.get_truck_num()
+
     for index in range(base_num):
         temp_base = Base(index)
         Bases.append(temp_base)
 
     for index in range(destination_num):
-        temp_destination = Destination(index)
+        temp_destination = Destination(index+base_num)
         Destinations.append(temp_destination)
 
     for index in range(truck_num):

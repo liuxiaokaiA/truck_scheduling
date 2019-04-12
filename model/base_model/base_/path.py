@@ -2,10 +2,11 @@
 import sys
 from itertools import permutations
 
-from global_data import Orders, Destinations, Bases
+from global_data import Orders, Destinations, Bases, Trucks
 from model.base_model.base import Base
 from model.base_model.base_.type import Truck_status
 from model.base_model.destination import Destination
+from model.base_model.truck import Truck
 
 
 class Path(object):
@@ -124,56 +125,38 @@ class Path(object):
                         temp_order_list.remove(order)
         if len(temp_order_list) > 0:
             return sys.maxint
-        cost += position_list[-1].calculate_distance(Base[last_position_id]) * truck.trunk_cost(
+        cost += position_list[-1].calculate_distance(Bases[last_position_id]) * truck.trunk_cost(
             len(temp_order_list))
         return cost
 
-    # 终点去接单
     @staticmethod
-    def get_cost_trunk_in_order_dest(trunk, orders):
-        trunk_base_id = trunk.trunk_base_id
-        trunk_base = Bases[trunk_base_id]
-        bases = {}
-        is_must = 0
-        for order_id in orders:
-            Orders[order_id]['is_loading'] += 1
-            if Orders[order_id]['is_loading'] > 1:
-                return sys.maxint
-            order = Orders[order_id]['object']
-            if order.delay_time > 10:
-                is_must = 1
-            if order.base not in bases:
-                bases[order.base] = []
-            bases[order.base].append(order)
-        if not is_must and len(orders) not in (0, 8):
+    def get_cost_trunk_in_order_dest(truck, orders):
+        path = []
+        if Orders[orders[0]].base != Trucks[truck].current_base:
+            path.append(Bases[Trucks[truck].current_base])
+        temp_base = []
+        temp_dest = []
+        for order in orders:
+            temp_base.append(Bases[order.base])
+            temp_dest.append(Destinations[order.destination])
+        path += temp_base
+        path += temp_dest
+        temp_order_list = []
+        if len(path) > 1 and isinstance(path[-1], Base):
             return sys.maxint
-        car_num = 0
-        temp_position = trunk.trunk_position
-        return_cost = 0
-        for base_id in bases:
-            base = Bases[base_id]
-            if base.position == trunk.trunk_position:
-                continue
-            return_cost += trunk.trunk_cost_one_road(car_num, temp_position, base.position)
-            temp_position = base.position
-            car_num += len(bases[base_id])
-
-        dests = {}
-        for order_id in orders:
-            order = Orders[order_id]['object']
-            if order.destination not in dests:
-                dests[order.destination] = []
-            dests[order.destination].append(order)
-
-        # 可以优化
-        for dest_id in dests:
-            dest = Destinations[dest_id]
-            return_cost += trunk.trunk_cost_one_road(car_num, temp_position, dest.position)
-            temp_position = dest.position
-            car_num -= len(dests[dest_id])
-
-        # 运完回去
-        # if len(orders) != 0:
-        #     return_cost += trunk.trunk_cost_one_road(0, temp_position, trunk_base.position)
-        return return_cost
+        cost = 0
+        for index, position in enumerate(path):
+            if index > 0:
+                cost += path[index - 1].calculate_ditance(position) * truck.trunk_cost(
+                    len(temp_order_list))
+            if isinstance(position, Base):
+                for order in orders:
+                    if order.base == position.id:
+                        if len(temp_order_list) < 8:
+                            temp_order_list.append(order)
+            else:
+                for order in temp_order_list:
+                    if order.destination == position.d_id:
+                        temp_order_list.remove(order)
+        return cost
 

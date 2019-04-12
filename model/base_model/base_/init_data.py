@@ -21,6 +21,9 @@ class Init_data(object):
         self.base_to_index = pd.read_csv('model/base_model/base_/base_data/base_to_index.csv')
         self.city_to_index = pd.read_csv('model/base_model/base_/base_data/city_to_index.csv')
         self.order_info = json.load(open('model/base_model/base_/base_data/orders.txt', 'r'))
+        self.base_num = self.__calculate_base_num()
+        self.destination_num = self.__calculate_destination_num()
+        self.truck_num = self.__calculate_truck_num()
 
     def __new__(cls, *args, **kwargs):
         if not hasattr(Init_data, "_instance"):
@@ -29,3 +32,38 @@ class Init_data(object):
                     Init_data._instance = object.__new__(cls)
         return Init_data._instance
 
+    def get_base_num(self):
+        """
+        :return: 网点数目
+        """
+        return self.base_num
+
+    def get_destination_num(self):
+        """
+        :return: 4s店数目
+        """
+        return self.destination_num
+
+    def get_truck_num(self):
+        """
+        :return: 板车的数目
+        """
+        return self.truck_num
+
+    def __calculate_base_num(self):
+        """
+        :return: 网点数目
+        """
+        return len(self.base_to_index)
+
+    def __calculate_destination_num(self):
+        """
+        :return: 4s店数目
+        """
+        return len(self.city_to_index)
+
+    def __calculate_truck_num(self):
+        """
+        :return: 板车的数目
+        """
+        return len(self.truck)

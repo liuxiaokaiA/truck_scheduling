@@ -15,8 +15,7 @@ class Base(Position, InquiryAPI):
         super(Base, self).__init__()
         self.id = id
         self.type = BASE
-        temp_x, temp_y = self.get_city_position()
-        self.set_position(temp_x, temp_y)
+        self.x, self.y = self.get_city_position()
         self.name = self.get_city_name()
         self.near_base = self.get_near_base()
         self.near_destination = self.get_near_destination()

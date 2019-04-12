@@ -2,22 +2,23 @@
 import logging
 
 from model.model_init import model_init
-from utils.log import MyLogging
 from algorithm.truck_scheduling import TruckScheduling
 from log import MyLogging
 
+log = logging.getLogger("debug")
+
 
 def init():
-    print ('model init start')
+    log.info('model init start')
     model_init()
-    print ('model init end')
+    log.info('model init end')
 
 
 def compute():
-    print("compute start")
+    log.info("compute start")
     truck_scheduling = TruckScheduling()
     truck_scheduling.run()
-    print("compute end")
+    log.info("compute end")
 
 
 def output():

@@ -34,11 +34,11 @@ class InquiryAPI(DataInquiry):
         base_list = []
         if self.type == BASE:
             for i in range(self.base_num):
-                if self.get_distance(base_id_1=self.id, base_id_2=i) < distance and i != id:
+                if self.get_distance(id_1=self.id, id_2=i) < distance and i != id:
                     base_list.append(i)
         elif self.type == DESTINATION:
             for i in range(self.base_num):
-                if self.get_distance(base_id_1=i, destination_id_1=self.id) < distance:
+                if self.get_distance(id_1=i, id_2=self.id) < distance:
                     base_list.append(i)
         else:
             log.error("DataInquiry get_near_base : wrong type")
@@ -47,12 +47,12 @@ class InquiryAPI(DataInquiry):
     def get_near_destination(self, distance=200):
         destination_list = []
         if self.type == BASE:
-            for i in range(self.destination_num):
-                if self.get_distance(base_id_1=self.id, destination_id_1=i) < distance:
+            for i in range(self.base_num, self.base_num+self.destination_num):
+                if self.get_distance(id_1=self.id, id_2=i) < distance:
                     destination_list.append(i)
         elif self.type == DESTINATION:
-            for i in range(self.destination_num):
-                if self.get_distance(destination_id_1=self.id, destination_id_2=i) < distance and id != i:
+            for i in range(self.base_num, self.base_num + self.destination_num):
+                if self.get_distance(id_1=self.id, id_2=i) < distance and id != i:
                     destination_list.append(i)
         return destination_list
 
@@ -73,8 +73,8 @@ class InquiryAPI(DataInquiry):
         base = None
         if self.type == DESTINATION:
             for index in range(self.base_num):
-                if self.get_distance(base_id_1=index, destination_id_1=self.id) < nearest_distance:
-                    nearest_distance = self.get_distance(base_id_1=index, destination_id_1=self.id)
+                if self.get_distance(id_1=index, id_2=self.id) < nearest_distance:
+                    nearest_distance = self.get_distance(id_1=index, id_2=self.id)
                     base = index
         return base
 
