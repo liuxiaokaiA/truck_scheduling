@@ -1,8 +1,10 @@
 # coding: utf-8
 import logging
+
 from model.model_init import model_init
 from utils.log import MyLogging
 from algorithm.truck_scheduling import TruckScheduling
+from log import MyLogging
 
 
 def init():
