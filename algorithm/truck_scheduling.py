@@ -8,14 +8,18 @@
 3. 不同场景的调度可以实现不同的基础算法，类似 DeapScoopGA ，业务类只需要继承不同的基础算法类即可
 
 """
+import logging
+
 from algorithm.base.basic_algorithm.deap_scoop_ga import DeapScoopGA
 from algorithm.base.data.data import Data
-from algorithm.base.data.rule import Rule
 from algorithm.base.model_process import ModelProcess
 
 
+log = logging.getLogger('debug')
+
+
 # 物流调度预处理类
-class TruckPreProcess(ModelProcess, Data, Rule):
+class TruckPreProcess(ModelProcess, Data):
     def __init__(self):
         super(TruckPreProcess, self).__init__()
 
@@ -108,8 +112,12 @@ class TruckPreProcess(ModelProcess, Data, Rule):
     # __get_truck_return 异地等待车顺路返回接单
     # __get_order_nearby 附近订单拼单
     def run_pre_process(self):
+        log.info('bases: ' + str(self.bases))
+        log.info('destinations: ' + str(self.destinations))
+        log.info('trucks: ' + str(self.trucks))
         self.__get_truck_return()
         self.__get_order_nearby()
+        log.info(str(self.bases))
 
 
 # 物流调度的算法类，继承自TruckPreProcess和DeapScoopGA
@@ -133,6 +141,7 @@ class TruckScheduling(TruckPreProcess, DeapScoopGA):
         # truck_data的key为truck空位，value为truck_id
         # order_data为未运订单可选择truck空位
         truck_data, order_data = self.get_orders_list(truck_max_order, truck_order)
+        log.info('ga data: %s' % str(order_data))
 
         self.truck_data = truck_data
         self.data = order_data
@@ -215,11 +224,19 @@ class TruckScheduling(TruckPreProcess, DeapScoopGA):
         value += self.__get_order_cost(individual)
         return value
 
+    def get_data(self):
+        self.set_data()
+
     def run(self):
+        log.info('start to get data')
+        self.get_data()
+        log.info('start to run pre process')
         self.run_pre_process()
         self.__set_data()
         self.__set_parameter()
+        log.info("start to run ga")
         best_ind = self.run_ga()
+        log.info("ga end")
         self.best_plan = self.__gene_to_plan(best_ind)
         self.__process_plan()
 

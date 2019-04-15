@@ -8,6 +8,7 @@ from model.rule import rules, levels
 class Rule(object):
     def __init__(self):
         super(Rule, self).__init__()
+        # print('rules: %s' % str(rules))
         self.order_level = {}
         for item in rules['order_level']:
             self.order_level[item['level']] = (item['start'], item['end'])
@@ -15,7 +16,7 @@ class Rule(object):
             'level': rules['must_take_order_level'][0],
             'start': rules['must_take_order_level'][1],
         }
-        self.min_take = rules['truck_take_order_min'],
+        self.min_take = rules['truck_take_order_min']
         self.truck_max_delay = rules['truck_delay_max']
         self.max_distance = rules['max_distance']
 

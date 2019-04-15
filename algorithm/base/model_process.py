@@ -9,7 +9,7 @@ import logging
 from model.modify_model import model_truck_take_orders
 
 
-log = logging.getLogger('default')
+log = logging.getLogger('debug')
 
 
 class ModelProcess(object):

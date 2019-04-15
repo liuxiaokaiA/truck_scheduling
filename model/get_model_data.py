@@ -21,9 +21,10 @@ def __get_trucks():
         truck_info = {
             'base': truck.base,
             'type': truck.capacity,
-            'delay_time': truck.delay_days,
+            'delay_time': truck.day,
+            'near_base': truck.near_base,
         }
-        trucks[str(truck.id)] = truck_info
+        trucks[truck.id] = truck_info
     return trucks
 
 
@@ -38,9 +39,9 @@ def __get_bases():
             'near_dest': base.near_destination,
             'other_truck': base.other_truck,
             'local_truck': base.local_truck,
-            'orders': base.orders
+            'orders': [order.id for order in base.orders]
         }
-        bases[str(base.id)] = base_info
+        bases[base.id] = base_info
     return bases
 
 
@@ -53,7 +54,7 @@ def __get_orders():
             'destination': order.destination,
             'delay_time': order.delay_time
         }
-        orders[str(order.id)] = order_info
+        orders[order.id] = order_info
     return orders
 
 
@@ -63,7 +64,7 @@ def __get_destinations():
         destination_info = {
             'near_dest': destination.near_destination
         }
-        destinations[str(destination.id)] = destination_info
+        destinations[destination.id] = destination_info
     return destinations
 
 

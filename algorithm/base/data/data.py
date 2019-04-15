@@ -11,6 +11,7 @@
 import copy
 
 from model.get_model_data import get_compute_data, model_is_near, model_truck_take_orders_cost
+from algorithm.base.data.rule import Rule
 
 
 class Base(object):
@@ -113,7 +114,7 @@ class Destination(object):
         return near_dest
 
 
-class Data(Base, Truck, Order, Destination):
+class Data(Base, Truck, Order, Destination, Rule):
     def __init__(self):
         super(Data, self).__init__()
 
@@ -144,6 +145,7 @@ class Data(Base, Truck, Order, Destination):
         truck_max_order = {}
         for base in self.bases:
             order_num = len(self.get_base_orders(base))
+            # print(order_num, self.min_take)
             trucks = self.get_base_truck(base, (order_num/self.min_take)+2)
             for truck_id in trucks:
                 truck_max_order[truck_id] = self.get_truck_type(truck_id)
