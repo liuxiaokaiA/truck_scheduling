@@ -21,13 +21,13 @@ class ModelProcess(object):
         if not result:
             log.error('truck_take_orders error! truck: %d, orders: %s' % (truck, str(del_order)))
             return result
-        base = self.get_truck_base(truck)
+        base = self.get_truck_current_base(truck)
         # 删除操作应与model操作一致
         # 删除base中的truck
         # 函数在compute_data文件中
         self.remove_truck_in_base(base, truck)
-        # 删除base中的order
-        self.remove_orders_in_base(base, del_order)
+        # 删除base中的order,可能不是truck的base
+        self.remove_orders_in_base(del_order)
         log.info('truck: %s, del_order: %s.' % (str(truck), str(del_order)))
         return result
 

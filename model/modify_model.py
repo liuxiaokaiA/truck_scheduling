@@ -12,10 +12,6 @@ def model_truck_take_orders(truck_id, order_ids):
     result = SUCCESS
     truck = Trucks[truck_id]
     truck.add_orders(order_list=order_ids)
-    temp_order = []
-    for order in Orders:
-        if order.id in order_ids:
-            temp_order.append(order)
-    for order in temp_order:
-        Orders.remove(order)
+    for order in order_ids:
+        del Orders[order]
     return result

@@ -51,8 +51,8 @@ class TruckPreProcess(ModelProcess, Data):
             dest_order = self.__get_near_base_dest_order(base)
             # other_truck 已经按照其滞留时间排好序
             other_truck = self.get_other_truck(base)
-            log.info('base: %d, other_truck: %s' % (base, str(other_truck)))
-            log.info('%s' % str(self.bases[base]['other_truck']))
+            # log.info('base: %d, other_truck: %s' % (base, str(other_truck)))
+            # log.info('%s' % str(self.bases[base]['other_truck']))
             for truck in other_truck:
                 near_order = set()
                 truck_base = self.get_truck_base(truck)
@@ -65,8 +65,8 @@ class TruckPreProcess(ModelProcess, Data):
                         near_order |= dest_order[dest]
                 # 所有顺路order
                 truck_type = self.get_truck_type(truck)
-                if truck_type <= len(near_order):
-                    log.info('truck_type: %d, near_order: %s' % (truck_type, str(near_order)))
+                # if truck_type <= len(near_order):
+                #     log.info('base: %d, near_order: %s' % (base, str(near_order)))
                 near_order = self.sort_order_by_delay(near_order)
                 del_order = []
                 if truck_type <= len(near_order):
@@ -75,6 +75,7 @@ class TruckPreProcess(ModelProcess, Data):
                     result = self.truck_take_orders(truck, del_order)
                     if not result:
                         continue
+                # log.info('dest_order : %s' % str(dest_order))
                 self.__remove_dest_order(dest_order, del_order)
 
     # 附近订单，目的地相近，能拼成整车的拼单
@@ -146,7 +147,8 @@ class TruckScheduling(TruckPreProcess, DeapScoopGA):
         # truck_data的key为truck空位，value为truck_id
         # order_data为未运订单可选择truck空位
         truck_data, order_data = self.get_orders_list(truck_max_order, truck_order)
-        log.info('ga data: %s' % str(order_data))
+        # log.info('ga data: %s' % str(order_data))
+        log.info('gene length: %d' % len(order_data))
 
         self.truck_data = truck_data
         self.data = order_data

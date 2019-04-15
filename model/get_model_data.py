@@ -20,6 +20,7 @@ def __get_trucks():
     for truck in Trucks.values():
         truck_info = {
             'base': truck.base,
+            'current_base': truck.current_base,
             'type': truck.capacity,
             'delay_time': truck.day,
             'near_base': truck.near_base,

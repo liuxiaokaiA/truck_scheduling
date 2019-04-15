@@ -49,11 +49,6 @@ class Base(object):
         if truck in self.bases[base]['local_truck']:
             self.bases[base]['local_truck'].remove(truck)
 
-    def remove_orders_in_base(self, base, del_order):
-        for order in del_order:
-            if order in self.bases[base]['orders']:
-                self.bases[base]['orders'].remove(order)
-
     def get_base_truck(self, base, count):
         trucks = []
         local = self.get_local_truck(base)
@@ -75,6 +70,9 @@ class Truck(object):
 
     def get_truck_base(self, truck):
         return self.trucks[truck]['base']
+
+    def get_truck_current_base(self, truck):
+        return self.trucks[truck]['current_base']
 
     def get_truck_type(self, truck):
         return self.trucks[truck]['type']
@@ -141,6 +139,11 @@ class Data(Base, Truck, Order, Destination, Rule):
 
     def is_near(self, truck_id, base, d):
         return model_is_near(truck_id, base, d)
+
+    def remove_orders_in_base(self, del_order):
+        for order in del_order:
+            base = self.get_order_base(order)
+            self.bases[base]['orders'].remove(order)
 
     # 获取调度用的trucks，以及其最大运载量
     def get_empty_truck_for_ga(self):
