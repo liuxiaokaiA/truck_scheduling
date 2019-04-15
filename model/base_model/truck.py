@@ -28,6 +28,7 @@ class Truck(Path, Position, TruckInquiryAPI):
         self.near_base = []
 
     def update(self, base_list):
+        self.x, self.y = base_list[self.current_base].x, base_list[self.current_base].y
         self.near_base = []
         for base in base_list:
             if self.calculate_distance(base) < 200.0:

@@ -78,13 +78,19 @@ class Path(object):
         return cost
 
     @staticmethod
-    def get_cost_trunk_in_order_dest(truck, orders):
+    def get_cost_trunk_in_order_dest(truck_id, order_ids):
         path = []
-        if Orders[orders[0]].base != Trucks[truck].current_base:
-            path.append(Bases[Trucks[truck].current_base])
+        truck = Trucks[truck_id]
+        order_list = []
+        for order_id in order_ids:
+            for order in Orders:
+                if order.id == order_id:
+                    order_list.append(order)
+        if order_list[0].base != truck.current_base:
+            path.append(Bases[truck.current_base])
         temp_base = []
         temp_dest = []
-        for order in orders:
+        for order in order_list:
             temp_base.append(Bases[order.base])
             temp_dest.append(Destinations[order.destination])
         path += temp_base
@@ -98,7 +104,7 @@ class Path(object):
                 cost += path[index - 1].calculate_ditance(position) * truck.trunk_cost(
                     len(temp_order_list))
             if isinstance(position, Base):
-                for order in orders:
+                for order in order_list:
                     if order.base == position.id:
                         if len(temp_order_list) < 8:
                             temp_order_list.append(order)
