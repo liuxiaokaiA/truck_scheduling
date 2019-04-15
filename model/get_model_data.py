@@ -17,7 +17,7 @@ from model.base_model.base_.path import Path
 
 def __get_trucks():
     trucks = {}
-    for truck in Trucks:
+    for truck in Trucks.values():
         truck_info = {
             'base': truck.base,
             'type': truck.capacity,
@@ -33,7 +33,7 @@ def __get_trucks():
 # orders只给未运订单
 def __get_bases():
     bases = {}
-    for base in Bases:
+    for base in Bases.values():
         base_info = {
             'near_base': base.near_base,
             'near_dest': base.near_destination,
@@ -48,7 +48,7 @@ def __get_bases():
 # orders只给未运订单
 def __get_orders():
     orders = {}
-    for order in Orders:
+    for order in Orders.values():
         order_info = {
             'base': order.base,
             'destination': order.destination,
@@ -60,7 +60,7 @@ def __get_orders():
 
 def __get_destinations():
     destinations = {}
-    for destination in Destinations:
+    for destination in Destinations.values():
         destination_info = {
             'near_dest': destination.near_destination
         }
@@ -69,9 +69,9 @@ def __get_destinations():
 
 
 def update_data():
-    for base in Bases:
+    for base in Bases.values():
         base.update_base_info(Trucks, Orders)
-    for truck in Trucks:
+    for truck in Trucks.values():
         truck.update()
 
 
@@ -91,5 +91,5 @@ def model_is_near(truck_id, base, d):
 
 
 def model_truck_take_orders_cost(truck, orders):
-    cost = Path.get_cost_trunk_in_order_dest(truck,orders)
+    cost = Path.get_cost_trunk_in_order_dest(truck, orders)
     return cost

@@ -61,7 +61,7 @@ class InquiryAPI(DataInquiry):
         other_truck = []
         if self.type != BASE:
             return local_truck, other_truck
-        for truck in truck_list:
+        for truck in truck_list.values():
             if truck.status == Truck_status.TRUCK_IN_ORDER and truck.base == self.id:
                 local_truck.append(truck.id)
             elif truck.status == Truck_status.TRUCK_IN_ORDER_DESTINATION and truck.current_base == self.id:
