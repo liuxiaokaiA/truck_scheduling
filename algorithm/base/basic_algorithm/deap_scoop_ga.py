@@ -8,12 +8,16 @@
 """
 import random
 import numpy
+import logging
 
 from deap import algorithms
 from deap import base
 from deap import creator
 from deap import tools
 from scoop import futures
+
+
+log = logging.getLogger('debug')
 
 
 # 通用的遗传算法封装
@@ -83,8 +87,8 @@ class DeapScoopGA(object):
         self.toolbox.register("population", tools.initRepeat, list, self.toolbox.individual)
         self.toolbox.register("evaluate", self.evaluate_gene)
         self.toolbox.register("mate", self.cxTwoPointCopy)
-        self.toolbox.register("mutate", self.tools.mutFlipBit, indpb=self.mutate)
-        self.toolbox.register("select", self.tools.selTournament, tournsize=3)
+        self.toolbox.register("mutate", tools.mutFlipBit, indpb=self.mutate)
+        self.toolbox.register("select", tools.selTournament, tournsize=3)
 
         random.seed(64)
         self.islands = [self.toolbox.population(n=self.pop_count) for i in range(self.NISLES)]
@@ -122,8 +126,11 @@ class DeapScoopGA(object):
         return None
 
     def run_ga(self):
+        log.info('start to init population')
         self.init_population()
+        log.info('start to evolution loop')
         self.evolution_loop()
+        log.info('evolution loop end')
         return self.get_best_gene()
 
 

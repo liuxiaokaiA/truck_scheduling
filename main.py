@@ -5,6 +5,7 @@ from model.model_init import model_init
 from algorithm.truck_scheduling import TruckScheduling
 from log import MyLogging
 
+
 log = logging.getLogger("debug")
 
 
