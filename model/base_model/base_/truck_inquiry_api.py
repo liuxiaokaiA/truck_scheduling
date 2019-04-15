@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+from model.base_model.base_.type import Truck_status
 from .data_inquiry import DataInquiry
 
 
@@ -12,3 +13,7 @@ class TruckInquiryAPI(DataInquiry):
     def __init__(self):
         super(TruckInquiryAPI, self).__init__()
         self.base, self.current_base, self.license, self.day, self.fleet = self.get_truck_info(self.id)
+        if self.base == self.current_base:
+            self.status = Truck_status.TRUCK_IN_ORDER
+        else:
+            self.status = Truck_status.TRUCK_IN_ORDER_DESTINATION

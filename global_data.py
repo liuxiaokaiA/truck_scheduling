@@ -1,7 +1,7 @@
-Trucks = []
-Orders = []
-Bases = []
-Destinations = []
+Trucks = {}
+Orders = {}
+Bases = {}
+Destinations = {}
 
 
 SUCCESS = 1

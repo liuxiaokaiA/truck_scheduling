@@ -37,8 +37,8 @@ class Path(object):
         for order in order_list:
             base_list.append(Bases[order.base])
             destination_list.append(Destinations[order.destination])
-        if base_list and Bases[truck.base] not in base_list:
-            position_list.append(Bases[truck.base])
+        if base_list and Bases[truck.current_base] not in base_list:
+            position_list.append(Bases[truck.current_base])
         position_list = position_list + base_list + destination_list
         all_list = []
         if len(position_list) < 11:
@@ -126,8 +126,8 @@ class Path(object):
         for order in order_list:
             base_list.append(Bases[order.base])
             destination_list.append(Destinations[order.destination])
-        if base_list and base_list[0].base != truck.base:
-            position_list.append(Bases[truck.base])
+        if base_list and base_list[0].base != truck.current_base:
+            position_list.append(Bases[truck.current_base])
         position_list = position_list + base_list + destination_list
         temp_order_list = []
         cost = 0

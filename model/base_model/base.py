@@ -25,7 +25,7 @@ class Base(Position, InquiryAPI):
 
     def update_base_info(self, truck_list, order_list):
         self.local_truck, self.other_truck = self.get_in_order_truck(truck_list)
-        for order in order_list:
+        for order in order_list.values():
             if order.base == self.id:
                 self.orders.append(order)
 

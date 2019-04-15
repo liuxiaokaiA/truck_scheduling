@@ -12,8 +12,6 @@ class Truck(Path, Position, TruckInquiryAPI):
         # 板车id
         self.id = id
         super(Truck, self).__init__()
-        # 板车当前状态
-        self.status = Truck_status.TRUCK_IN_ORDER
         # 板车容量
         self.capacity = 8
         # 板车历史信息
@@ -30,7 +28,7 @@ class Truck(Path, Position, TruckInquiryAPI):
     def update(self, base_list):
         self.x, self.y = base_list[self.current_base].x, base_list[self.current_base].y
         self.near_base = []
-        for base in base_list:
+        for base in base_list.values():
             if self.calculate_distance(base) < 200.0:
                 self.near_base.append(base.id)
 
