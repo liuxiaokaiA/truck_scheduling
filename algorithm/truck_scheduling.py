@@ -72,7 +72,6 @@ class TruckPreProcess(ModelProcess, Data):
                 if truck_type <= len(near_order):
                     del_order = near_order[:truck_type]
                 if del_order:
-                    truck.is_return = True
                     result = self.truck_take_orders(truck, del_order)
                     if not result:
                         continue
