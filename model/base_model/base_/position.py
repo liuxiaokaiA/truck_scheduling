@@ -2,7 +2,7 @@
 
 
 # 网点，4S店，车辆都有该属性，抽象出来
-from cmath import sqrt
+from math import sqrt
 
 
 class Position(object):

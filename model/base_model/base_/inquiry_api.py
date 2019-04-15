@@ -34,7 +34,7 @@ class InquiryAPI(DataInquiry):
         base_list = []
         if self.type == BASE:
             for i in range(self.base_num):
-                if self.get_distance(id_1=self.id, id_2=i) < distance and i != id:
+                if self.get_distance(id_1=self.id, id_2=i) < distance and i != self.id:
                     base_list.append(i)
         elif self.type == DESTINATION:
             for i in range(self.base_num):
