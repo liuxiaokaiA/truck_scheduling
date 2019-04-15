@@ -40,3 +40,5 @@ def model_init():
     init_order()
     for base in Bases:
         base.update_base_info(order_list=Orders, truck_list=Trucks)
+    for truck in Trucks:
+        truck.update(Bases)

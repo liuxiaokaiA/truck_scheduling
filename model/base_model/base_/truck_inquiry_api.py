@@ -12,8 +12,3 @@ class TruckInquiryAPI(DataInquiry):
     def __init__(self):
         super(TruckInquiryAPI, self).__init__()
         self.base, self.current_base, self.license, self.day, self.fleet = self.get_truck_info(self.id)
-
-    # 封装truck调用的查询函数
-    def get_near_base_station(self, position, base_list, distance=200):
-        for base in base_list:
-            position.calculate_distance(base_list.position)

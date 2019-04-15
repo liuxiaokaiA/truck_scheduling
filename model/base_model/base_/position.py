@@ -17,4 +17,4 @@ class Position(object):
         self.y = y
 
     def calculate_distance(self, position):
-        return sqrt(pow(self.x - position.x, 2) + pow(self.y - position.y, position.y))
+        return sqrt(pow(self.x - position.x, 2) + pow(self.y - position.y, 2))
