@@ -99,10 +99,10 @@ class TruckPreProcess(ModelProcess, Data):
                     near_bases.remove(first_order_base)
                     near_bases.append(first_order_base)
                 for base_near in near_bases[::-1]:
-                    try:
-                        temp = self.get_truck_from_base(base_near, temp)
-                    except Exception as e:
-                        print e
+                    # try:
+                    temp = self.get_truck_from_base(base_near, temp)
+                    # except Exception as e:
+                    #     print e
                     if len(temp) < self.min_take:
                         break
                 del_order = [o for o in all_order if o not in temp]
@@ -112,12 +112,12 @@ class TruckPreProcess(ModelProcess, Data):
     # __get_truck_return 异地等待车顺路返回接单
     # __get_order_nearby 附近订单拼单
     def run_pre_process(self):
-        log.info('bases: ' + str(self.bases))
-        log.info('destinations: ' + str(self.destinations))
-        log.info('trucks: ' + str(self.trucks))
+        # log.info('bases: ' + str(self.bases))
+        # log.info('destinations: ' + str(self.destinations))
+        # log.info('trucks: ' + str(self.trucks))
         self.__get_truck_return()
         self.__get_order_nearby()
-        log.info(str(self.bases))
+        # log.info(str(self.bases))
 
 
 # 物流调度的算法类，继承自TruckPreProcess和DeapScoopGA

@@ -25,16 +25,16 @@ class ModelProcess(object):
         # 删除操作应与model操作一致
         # 删除base中的truck
         # 函数在compute_data文件中
-        self.remove_orther_truck_in_base(base, truck)
+        self.remove_truck_in_base(base, truck)
         # 删除base中的order
         self.remove_orders_in_base(base, del_order)
+        log.info('truck: %s, del_order: %s.' % (str(truck), str(del_order)))
         return result
 
     def __get_truck_to_work(self, base, type, all_orders):
         truck = self.get_truck_to_use(base)
         if truck is None:
             return False
-        truck = self.trucks[truck]
         if type < len(all_orders):
             orders = all_orders[:type]
             self.truck_take_orders(truck, orders)
@@ -47,7 +47,7 @@ class ModelProcess(object):
             if len(orders) >= self.min_take:
                 if self.__get_truck_to_work(base, self.min_take, orders):
                     orders = orders[self.min_take:]
-                    self.update_single_process(base)
+                    # self.update_single_process(base)
                 else:
                     break
             else:
