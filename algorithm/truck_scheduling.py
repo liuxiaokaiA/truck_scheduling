@@ -51,6 +51,8 @@ class TruckPreProcess(ModelProcess, Data):
             dest_order = self.__get_near_base_dest_order(base)
             # other_truck 已经按照其滞留时间排好序
             other_truck = self.get_other_truck(base)
+            log.info('base: %d, other_truck: %s' % (base, str(other_truck)))
+            log.info('%s' % str(self.bases[base]['other_truck']))
             for truck in other_truck:
                 near_order = set()
                 truck_base = self.get_truck_base(truck)
@@ -62,9 +64,11 @@ class TruckPreProcess(ModelProcess, Data):
                     if dest in dest_nears:
                         near_order |= dest_order[dest]
                 # 所有顺路order
+                truck_type = self.get_truck_type(truck)
+                if truck_type <= len(near_order):
+                    log.info('truck_type: %d, near_order: %s' % (truck_type, str(near_order)))
                 near_order = self.sort_order_by_delay(near_order)
                 del_order = []
-                truck_type = self.get_truck_type(truck)
                 if truck_type <= len(near_order):
                     del_order = near_order[:truck_type]
                 if del_order:
@@ -99,10 +103,10 @@ class TruckPreProcess(ModelProcess, Data):
                     near_bases.remove(first_order_base)
                     near_bases.append(first_order_base)
                 for base_near in near_bases[::-1]:
-                    try:
-                        temp = self.get_truck_from_base(base_near, temp)
-                    except Exception as e:
-                        print e
+                    # try:
+                    temp = self.get_truck_from_base(base_near, temp)
+                    # except Exception as e:
+                    #     print e
                     if len(temp) < self.min_take:
                         break
                 del_order = [o for o in all_order if o not in temp]
@@ -112,12 +116,14 @@ class TruckPreProcess(ModelProcess, Data):
     # __get_truck_return 异地等待车顺路返回接单
     # __get_order_nearby 附近订单拼单
     def run_pre_process(self):
-        log.info('bases: ' + str(self.bases))
-        log.info('destinations: ' + str(self.destinations))
-        log.info('trucks: ' + str(self.trucks))
+        # log.info('bases: ' + str(self.bases))
+        # log.info('destinations: ' + str(self.destinations))
+        # log.info('trucks: ' + str(self.trucks))
+        log.info('start to get_truck_return')
         self.__get_truck_return()
+        log.info('start to get_order_nearby')
         self.__get_order_nearby()
-        log.info(str(self.bases))
+        # log.info(str(self.bases))
 
 
 # 物流调度的算法类，继承自TruckPreProcess和DeapScoopGA

@@ -43,9 +43,11 @@ class Base(object):
         other_truck = sorted(list(other_truck), key=lambda truck: self.trucks[truck]['delay_time'], reverse=True)
         return other_truck
 
-    def remove_orther_truck_in_base(self, base, truck):
+    def remove_truck_in_base(self, base, truck):
         if truck in self.bases[base]['other_truck']:
             self.bases[base]['other_truck'].remove(truck)
+        if truck in self.bases[base]['local_truck']:
+            self.bases[base]['local_truck'].remove(truck)
 
     def remove_orders_in_base(self, base, del_order):
         for order in del_order:
