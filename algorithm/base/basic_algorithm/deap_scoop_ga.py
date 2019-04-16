@@ -105,6 +105,28 @@ class DeapScoopGA(object):
         self.toolbox.register("algorithm", algorithms.eaSimple, toolbox=self.toolbox, cxpb=self.cxpb,
                               mutpb=self.mutpb, ngen=self.FREQ, stats=stats, verbose=False)
 
+    def migRing(self, populations, k, selection, replacement=None, migarray=None):
+        nbr_demes = len(populations)
+        if migarray is None:
+            migarray = range(1, nbr_demes) + [0]
+
+        immigrants = [[] for i in xrange(nbr_demes)]
+        emigrants = [[] for i in xrange(nbr_demes)]
+
+        for from_deme in xrange(nbr_demes):
+            emigrants[from_deme].extend(selection(populations[from_deme], k))
+            if replacement is None:
+                # If no replacement strategy is selected, replace those who migrate
+                immigrants[from_deme] = emigrants[from_deme]
+            else:
+                # Else select those who will be replaced
+                immigrants[from_deme].extend(replacement(populations[from_deme], k))
+
+        for from_deme, to_deme in enumerate(migarray):
+            for i, immigrant in enumerate(immigrants[to_deme]):
+                # indx = populations[to_deme].index(immigrant)
+                populations[to_deme][i] = emigrants[from_deme][i]
+
     def evolution_loop(self):
         # 注册map，调用scoop多进程进行计算
         self.toolbox.register("map", futures.map)
@@ -112,10 +134,11 @@ class DeapScoopGA(object):
             log.info('count: %d' % i)
             results = self.toolbox.map(self.toolbox.algorithm, self.islands)
             self.islands = [pop for pop, logbook in results]
-            tools.migRing(self.islands, 15, tools.selBest)
+            self.migRing(self.islands, 15, tools.selBest)
             best = self.get_best_gene()
-            if best:
-                log.info('best gene: %d' % int(ind.fitness.values))
+            if best is not None:
+                log.info('best gene: %s' % str(best.fitness.values))
+                log.info('best gene: %s' % str(self._TruckScheduling__gene_to_plan(best)))
 
     def get_best_gene(self):
         bests = []

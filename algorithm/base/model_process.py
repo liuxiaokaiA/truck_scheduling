@@ -15,6 +15,7 @@ log = logging.getLogger('debug')
 class ModelProcess(object):
     def __init__(self):
         super(ModelProcess, self).__init__()
+        self.count = 0
 
     def truck_take_orders(self, truck, del_order):
         result = model_truck_take_orders(truck, del_order)
@@ -28,7 +29,9 @@ class ModelProcess(object):
         self.remove_truck_in_base(base, truck)
         # 删除base中的order,可能不是truck的base
         self.remove_orders_in_base(del_order)
-        log.info('truck: %s, del_order: %s.' % (str(truck), str(del_order)))
+
+        log.info('count : %d , truck: %s, del_order: %s.' % (self.count, str(truck), str(del_order)))
+        self.count += 1
         return result
 
     def __get_truck_to_work(self, base, type, all_orders):

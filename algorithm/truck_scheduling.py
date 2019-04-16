@@ -9,6 +9,7 @@
 
 """
 import logging
+import copy
 
 from algorithm.base.basic_algorithm.deap_scoop_ga import DeapScoopGA
 from algorithm.base.data.data import Data
@@ -166,17 +167,35 @@ class TruckScheduling(TruckPreProcess, DeapScoopGA):
         self.gene_len = len(self.data)
         self.pop_count = self.gene_len * 3
 
+    # def remove_truck_count(self, data, truck_count):
+    #     for order in data:
+    #         if truck_count in data[order]:
+    #             data[order].remove(truck_count)
+
+    def __get_truck_count(self, truck_list, index_truck, truck_count_set):
+        length = len(truck_list)
+        for i in range(length):
+            index = (index_truck + i) % length
+            truck_count = truck_list[index]
+            if truck_count not in truck_count_set:
+                return truck_count
+        return 0
+
     # 基因转换为具体方案
     def __gene_to_plan(self, individual):
         plan = {}
+        data = copy.deepcopy(self.data)
+        truck_count_set = set()
         for index in range(len(self.key_order)):
             gene_num = individual[index]
             order_ = self.key_order[index]
-            truck_list = self.data[order_]
-            truck_count = truck_list[gene_num % len(truck_list)]
+            truck_list = data[order_]
+            index_truck = gene_num % len(truck_list)
+            truck_count = self.__get_truck_count(truck_list, index_truck, truck_count_set)
             # id为0，则无truck
             if not truck_count:
                 continue
+            truck_count_set.add(truck_count)
             truck = self.truck_data[truck_count]
             if truck not in plan:
                 plan[truck] = []
@@ -224,12 +243,12 @@ class TruckScheduling(TruckPreProcess, DeapScoopGA):
             if not plan[truck] or len(plan[truck]) == 0:
                 continue
             if len(plan[truck]) > self.get_truck_type(truck):
-                return self.MAX
+                return self.MAX,
             value += self.__get_truck_take_orders(truck, plan[truck])
             if value >= self.MAX:
-                return value
+                return value,
         value += self.__get_order_cost(individual)
-        return value
+        return value,
 
     def get_data(self):
         self.set_data()

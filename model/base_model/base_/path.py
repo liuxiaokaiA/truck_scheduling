@@ -4,6 +4,7 @@ from itertools import permutations
 
 from global_data import Orders, Destinations, Bases, Trucks
 from model.base_model.base import Base
+from model.base_model.truck import Truck
 from model.base_model.base_.type import Truck_status
 from model.base_model.destination import Destination
 import logging
@@ -62,7 +63,7 @@ class Path(object):
         temp_order_list = []
         for index, position in enumerate(position_list):
             if index > 0:
-                cost += position_list[index-1].calculate_ditance(position)*truck.truck_cost(len(temp_order_list))
+                cost += position_list[index-1].calculate_distance(position)*truck.truck_cost(len(temp_order_list))
             if isinstance(position, Base):
                 for order in order_list:
                     if order.base == position.id:
@@ -80,12 +81,13 @@ class Path(object):
     @staticmethod
     def get_cost_truck_in_order_dest(truck_id, order_ids):
         path = []
-        truck = Trucks[truck_id]
         order_list = []
         for order_id in order_ids:
             order_list.append(Orders[order_id])
-        if order_list[0].base != truck.current_base:
-            path.append(Bases[truck.current_base])
+        if truck_id is not None:
+            truck = Trucks[truck_id]
+            if order_list[0].base != truck.current_base:
+                path.append(Bases[truck.current_base])
         temp_base = []
         temp_dest = []
         for order in order_list:
@@ -99,7 +101,7 @@ class Path(object):
         cost = 0
         for index, position in enumerate(path):
             if index > 0:
-                cost += path[index - 1].calculate_distance(position) * truck.truck_cost(
+                cost += path[index - 1].calculate_distance(position) * Truck.truck_cost(
                     len(temp_order_list))
             if isinstance(position, Base):
                 for order in order_list:
@@ -131,7 +133,7 @@ class Path(object):
         cost = 0
         for index, position in enumerate(position_list):
             if index > 0:
-                cost += position_list[index-1].calculate_ditance(position)*truck.truck_cost(len(temp_order_list))
+                cost += position_list[index-1].calculate_distance(position)*truck.truck_cost(len(temp_order_list))
 
             if isinstance(position, Base):
                 for order in order_list:
