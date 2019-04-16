@@ -91,5 +91,5 @@ def model_is_near(truck_id, base, d):
 
 
 def model_truck_take_orders_cost(truck, orders):
-    cost = Path.get_cost_trunk_in_order_dest(truck, orders)
+    cost = Path.get_cost_truck_in_order_dest(truck, orders)
     return cost

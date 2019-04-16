@@ -25,18 +25,24 @@ class Truck(Path, Position, TruckInquiryAPI):
         #  附近网点
         self.near_base = []
 
-    def update(self, base_list):
+    def set_date(self, base_list):
         self.x, self.y = base_list[self.current_base].x, base_list[self.current_base].y
         self.near_base = []
         for base in base_list.values():
             if self.calculate_distance(base) < 200.0:
                 self.near_base.append(base.id)
 
+    def update(self):
+        pass
+
     def add_orders(self, order_list):
         self.orders = order_list
         self.city_list = Path.get_best_path(self.id, order_list)
         self.status = Truck_status.TRUCK_ON_ROAD
 
+    def truck_cost(self, car_number):
+        return Truck.truck_cost_default(self.capacity, car_number)
+
     @staticmethod
-    def truck_cost(car_number):
-        return 1.0 * (1 + car_number * 0.05)
+    def truck_cost_default(capacity, car_number):
+        return (capacity / 6.0) * (1 + car_number * 0.05)

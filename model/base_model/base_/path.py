@@ -8,7 +8,46 @@ from model.base_model.base_.type import Truck_status
 from model.base_model.destination import Destination
 import logging
 
+from model.base_model.truck import Truck
+
 log = logging.getLogger("default")
+
+
+def calculate_cost_by_path(truck_id, position_list, order_list):
+    truck = Trucks[truck_id]
+    cost = 0
+    temp_order_list = []
+    for index, position in enumerate(position_list):
+        if index > 0:
+            cost += position_list[index - 1].calculate_ditance(position) * truck.truck_cost(len(temp_order_list))
+        if isinstance(position, Base):
+            for order in order_list:
+                if order.base == position.id:
+                    if len(temp_order_list) < 8:
+                        temp_order_list.append(order)
+        else:
+            for order in temp_order_list:
+                if order.destination == position.d_id:
+                    temp_order_list.remove(order)
+    if temp_order_list:
+        log.error("there some order not arrive destination")
+        return sys.maxint
+    if truck.status == Truck_status.TRUCK_IN_ORDER:
+        future_base = position_list[-1].nearest_base
+        cost += position_list[-1].calculate_ditance(Bases[future_base]) * truck.truck_cost(0)
+    elif truck.status == Truck_status.TRUCK_IN_ORDER_DESTINATION:
+        future_base = position_list[-1].nearest_base
+        cost_return_base = cost + position_list[-1].calculate_ditance(Bases[truck.base]) * truck.truck_cost(0)
+        cost_go_near = cost + position_list[-1].calculate_ditance(future_base) * truck.truck_cost(0)
+        if cost_return_base < 1.3 * cost_go_near:
+            cost = cost_return_base
+            future_base = truck.base
+        else:
+            cost = cost_go_near
+    else:
+        future_base = None
+        cost = sys.maxint
+    return future_base, cost
 
 
 class Path(object):
@@ -18,6 +57,7 @@ class Path(object):
         self.destinations = []
         self.now = 0
         self.future_base = None
+        self.speed = 100
 
         # 以下三个必须对应起来
         # 保留该路线所有信息，经过的也保留起来
@@ -25,16 +65,15 @@ class Path(object):
         self.orders = []
         self.times = []
 
-    @staticmethod
-    def get_best_path(truck_id, order_ids):
+    def get_best_path(self, truck_id, order_ids):
         truck = Trucks[truck_id]
-        order_list = []
+        self.orders = []
         base_list = []
         destination_list = []
         position_list = []
         for order_id in order_ids:
-            order_list.append(Orders[order_id])
-        for order in order_list:
+            self.orders.append(Orders[order_id])
+        for order in self.orders:
             base_list.append(Bases[order.base])
             destination_list.append(Destinations[order.destination])
         if base_list and Bases[truck.current_base] not in base_list:
@@ -46,48 +85,36 @@ class Path(object):
                 all_list.append(position_list[0:1] + list(temp_list))
         min_cost = sys.maxint
         min_path = []
+
         for index, current_list in enumerate(all_list):
             if index > 10000:
                 break
-            current_cost = Path.calculate_cost_by_path(truck_id,current_list,order_list)
+            future_base, current_cost = calculate_cost_by_path(current_list, self.orders)
             if current_cost < min_cost:
                 min_cost = current_cost
                 min_path = current_list
-        return min_path
+                self.future_base = future_base
+        self.path = min_path
 
-    @staticmethod
-    def calculate_cost_by_path(truck_id, position_list, order_list):
-        truck = Trucks[truck_id]
-        cost = 0
-        temp_order_list = []
-        for index, position in enumerate(position_list):
-            if index > 0:
-                cost += position_list[index-1].calculate_ditance(position)*truck.trunk_cost(len(temp_order_list))
-            if isinstance(position, Base):
-                for order in order_list:
-                    if order.base == position.id:
-                        if len(temp_order_list) < 8:
-                            temp_order_list.append(order)
+    def calculate_truck_time(self):
+        self.times = []
+        for index, position in enumerate(self.path):
+            if index == 0:
+                self.times.append(self.now)
             else:
-                for order in temp_order_list:
-                    if order.destination == position.d_id:
-                        temp_order_list.remove(order)
-        if temp_order_list:
-            log.error("there some order not arrive destination")
-            return sys.maxint
-        return cost
+                self.times.append(self.times[-1]+position.calculate_distance(self.path[index-1])/self.speed)
+        self.times.append(self.path[-1].calculate_distance(Bases[self.future_base]))
 
     @staticmethod
-    def get_cost_trunk_in_order_dest(truck_id, order_ids):
+    def get_cost_truck_in_order_dest(truck_id, order_ids):
         path = []
-        truck = Trucks[truck_id]
         order_list = []
         for order_id in order_ids:
-            for order in Orders:
-                if order.id == order_id:
-                    order_list.append(order)
-        if order_list[0].base != truck.current_base:
-            path.append(Bases[truck.current_base])
+            order_list.append(Orders[order_id])
+        if truck_id:
+            truck = Trucks[truck_id]
+            if order_list[0].base != truck.current_base:
+                path.append(Bases[truck.current_base])
         temp_base = []
         temp_dest = []
         for order in order_list:
@@ -101,8 +128,8 @@ class Path(object):
         cost = 0
         for index, position in enumerate(path):
             if index > 0:
-                cost += path[index - 1].calculate_ditance(position) * truck.trunk_cost(
-                    len(temp_order_list))
+                cost += path[index - 1].calculate_distance(position) * Truck.truck_cost_default(
+                    8, len(temp_order_list))
             if isinstance(position, Base):
                 for order in order_list:
                     if order.base == position.id:
@@ -110,49 +137,42 @@ class Path(object):
                             temp_order_list.append(order)
             else:
                 for order in temp_order_list:
-                    if order.destination == position.d_id:
+                    if order.destination == position.id:
                         temp_order_list.remove(order)
         return cost
 
-    @staticmethod
-    def calculate_cost_by_id(truck_id, order_ids):
-        truck = Trucks[truck_id]
-        order_list = []
-        base_list = []
-        destination_list = []
-        position_list = []
-        for order_id in order_ids:
-            order_list.append(Orders[order_id])
-        for order in order_list:
-            base_list.append(Bases[order.base])
-            destination_list.append(Destinations[order.destination])
-        if base_list and base_list[0].base != truck.current_base:
-            position_list.append(Bases[truck.current_base])
-        position_list = position_list + base_list + destination_list
-        temp_order_list = []
-        cost = 0
-        for index, position in enumerate(position_list):
-            if index > 0:
-                cost += position_list[index-1].calculate_ditance(position)*truck.trunk_cost(len(temp_order_list))
 
-            if isinstance(position, Base):
-                for order in order_list:
-                    if order.base == position.id:
-                        if len(temp_order_list) < 8:
-                            temp_order_list.append(order)
-            else:
-                for order in temp_order_list:
-                    if order.destination == position.d_id:
-                        temp_order_list.remove(order)
-        if temp_order_list:
-            log.error("there some order not arrive destination")
-            return sys.maxint
-        return cost
-
-
-
-
-
-
-
-
+    # @staticmethod
+    # def calculate_cost_by_id(truck_id, order_ids):
+    #     truck = Trucks[truck_id]
+    #     order_list = []
+    #     base_list = []
+    #     destination_list = []
+    #     position_list = []
+    #     for order_id in order_ids:
+    #         order_list.append(Orders[order_id])
+    #     for order in order_list:
+    #         base_list.append(Bases[order.base])
+    #         destination_list.append(Destinations[order.destination])
+    #     if base_list and base_list[0].base != truck.current_base:
+    #         position_list.append(Bases[truck.current_base])
+    #     position_list = position_list + base_list + destination_list
+    #     temp_order_list = []
+    #     cost = 0
+    #     for index, position in enumerate(position_list):
+    #         if index > 0:
+    #             cost += position_list[index - 1].calculate_ditance(position) * truck.truck_cost(len(temp_order_list))
+    #
+    #         if isinstance(position, Base):
+    #             for order in order_list:
+    #                 if order.base == position.id:
+    #                     if len(temp_order_list) < 8:
+    #                         temp_order_list.append(order)
+    #         else:
+    #             for order in temp_order_list:
+    #                 if order.destination == position.id:
+    #                     temp_order_list.remove(order)
+    #     if temp_order_list:
+    #         log.error("there some order not arrive destination")
+    #         return sys.maxint
+    #     return cost

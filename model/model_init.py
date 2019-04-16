@@ -34,11 +34,11 @@ def model_init():
         Destinations[index+base_num] = temp_destination
 
     for index in range(truck_num):
-        temp_trunk = Truck(index)
-        Trucks[index] = temp_trunk
+        temp_truck = Truck(index)
+        Trucks[index] = temp_truck
 
     init_order()
     for base in Bases.values():
         base.update_base_info(order_list=Orders, truck_list=Trucks)
     for truck in Trucks.values():
-        truck.update(Bases)
+        truck.set_data(Bases)
