@@ -4,9 +4,6 @@ from itertools import permutations
 
 from global_data import Orders, Destinations, Bases, Trucks
 from model.base_model.base import Base
-from model.base_model.truck import Truck
-from model.base_model.base_.type import Truck_status
-from model.base_model.destination import Destination
 import logging
 
 log = logging.getLogger("default")
@@ -63,7 +60,7 @@ class Path(object):
         temp_order_list = []
         for index, position in enumerate(position_list):
             if index > 0:
-                cost += position_list[index-1].calculate_distance(position)*truck.truck_cost(len(temp_order_list))
+                cost += position_list[index-1].calculate_distance(position)*Path.truck_cost(len(temp_order_list))
             if isinstance(position, Base):
                 for order in order_list:
                     if order.base == position.id:
@@ -77,6 +74,10 @@ class Path(object):
             log.error("there some order not arrive destination")
             return sys.maxint
         return cost
+
+    @staticmethod
+    def truck_cost(car_number):
+        return 1.0 * (1 + car_number * 0.05)
 
     @staticmethod
     def get_cost_truck_in_order_dest(truck_id, order_ids):
@@ -101,7 +102,7 @@ class Path(object):
         cost = 0
         for index, position in enumerate(path):
             if index > 0:
-                cost += path[index - 1].calculate_distance(position) * Truck.truck_cost(
+                cost += path[index - 1].calculate_distance(position) * Path.truck_cost(
                     len(temp_order_list))
             if isinstance(position, Base):
                 for order in order_list:
@@ -133,7 +134,7 @@ class Path(object):
         cost = 0
         for index, position in enumerate(position_list):
             if index > 0:
-                cost += position_list[index-1].calculate_distance(position)*truck.truck_cost(len(temp_order_list))
+                cost += position_list[index-1].calculate_distance(position)*Path.truck_cost(len(temp_order_list))
 
             if isinstance(position, Base):
                 for order in order_list:
