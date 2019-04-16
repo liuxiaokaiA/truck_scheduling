@@ -131,14 +131,14 @@ class DeapScoopGA(object):
         # 注册map，调用scoop多进程进行计算
         self.toolbox.register("map", futures.map)
         for i in range(0, self.NGEN, self.FREQ):
-            log.info('count: %d' % i)
+            log.info('evolution loop times: %d' % i)
             results = self.toolbox.map(self.toolbox.algorithm, self.islands)
             self.islands = [pop for pop, logbook in results]
             self.migRing(self.islands, 15, tools.selBest)
             best = self.get_best_gene()
             if best is not None:
                 log.info('best gene: %s' % str(best.fitness.values))
-                log.info('best gene: %s' % str(self._TruckScheduling__gene_to_plan(best)))
+                # log.info('best gene: %s' % str(self.gene_to_plan(best)))
 
     def get_best_gene(self):
         bests = []

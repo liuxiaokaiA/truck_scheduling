@@ -182,7 +182,7 @@ class TruckScheduling(TruckPreProcess, DeapScoopGA):
         return 0
 
     # 基因转换为具体方案
-    def __gene_to_plan(self, individual):
+    def gene_to_plan(self, individual):
         plan = {}
         data = copy.deepcopy(self.data)
         truck_count_set = set()
@@ -237,7 +237,7 @@ class TruckScheduling(TruckPreProcess, DeapScoopGA):
 
     # 实现基因评估函数
     def evaluate_gene(self, individual):
-        plan = self.__gene_to_plan(individual)
+        plan = self.gene_to_plan(individual)
         value = 0
         for truck in plan:
             if not plan[truck] or len(plan[truck]) == 0:
@@ -263,7 +263,7 @@ class TruckScheduling(TruckPreProcess, DeapScoopGA):
         log.info("start to run ga")
         best_ind = self.run_ga()
         log.info("ga end")
-        self.best_plan = self.__gene_to_plan(best_ind)
+        self.best_plan = self.gene_to_plan(best_ind)
         self.__process_plan()
 
 
