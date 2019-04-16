@@ -40,9 +40,3 @@ class Truck(Path, Position, TruckInquiryAPI):
         self.city_list = Path.get_best_path(self.id, order_list)
         self.status = Truck_status.TRUCK_ON_ROAD
 
-    def truck_cost(self, car_number):
-        return Truck.truck_cost_default(self.capacity, car_number)
-
-    @staticmethod
-    def truck_cost_default(capacity, car_number):
-        return (capacity / 6.0) * (1 + car_number * 0.05)

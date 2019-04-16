@@ -13,5 +13,5 @@ def model_truck_take_orders(truck_id, order_ids):
     truck = Trucks[truck_id]
     truck.add_orders(order_list=order_ids)
     for order in order_ids:
-        Orders.pop(order)
+        del Orders[order]
     return result

@@ -9,6 +9,7 @@
 
 """
 import logging
+import copy
 
 from algorithm.base.basic_algorithm.deap_scoop_ga import DeapScoopGA
 from algorithm.base.data.data import Data
@@ -51,8 +52,8 @@ class TruckPreProcess(ModelProcess, Data):
             dest_order = self.__get_near_base_dest_order(base)
             # other_truck 已经按照其滞留时间排好序
             other_truck = self.get_other_truck(base)
-            log.info('base: %d, other_truck: %s' % (base, str(other_truck)))
-            log.info('%s' % str(self.bases[base]['other_truck']))
+            # log.info('base: %d, other_truck: %s' % (base, str(other_truck)))
+            # log.info('%s' % str(self.bases[base]['other_truck']))
             for truck in other_truck:
                 near_order = set()
                 truck_base = self.get_truck_base(truck)
@@ -65,8 +66,8 @@ class TruckPreProcess(ModelProcess, Data):
                         near_order |= dest_order[dest]
                 # 所有顺路order
                 truck_type = self.get_truck_type(truck)
-                if truck_type <= len(near_order):
-                    log.info('truck_type: %d, near_order: %s' % (truck_type, str(near_order)))
+                # if truck_type <= len(near_order):
+                #     log.info('base: %d, near_order: %s' % (base, str(near_order)))
                 near_order = self.sort_order_by_delay(near_order)
                 del_order = []
                 if truck_type <= len(near_order):
@@ -75,6 +76,7 @@ class TruckPreProcess(ModelProcess, Data):
                     result = self.truck_take_orders(truck, del_order)
                     if not result:
                         continue
+                # log.info('dest_order : %s' % str(dest_order))
                 self.__remove_dest_order(dest_order, del_order)
 
     # 附近订单，目的地相近，能拼成整车的拼单
@@ -146,7 +148,8 @@ class TruckScheduling(TruckPreProcess, DeapScoopGA):
         # truck_data的key为truck空位，value为truck_id
         # order_data为未运订单可选择truck空位
         truck_data, order_data = self.get_orders_list(truck_max_order, truck_order)
-        log.info('ga data: %s' % str(order_data))
+        # log.info('ga data: %s' % str(order_data))
+        log.info('gene length: %d' % len(order_data))
 
         self.truck_data = truck_data
         self.data = order_data
@@ -164,17 +167,35 @@ class TruckScheduling(TruckPreProcess, DeapScoopGA):
         self.gene_len = len(self.data)
         self.pop_count = self.gene_len * 3
 
+    # def remove_truck_count(self, data, truck_count):
+    #     for order in data:
+    #         if truck_count in data[order]:
+    #             data[order].remove(truck_count)
+
+    def __get_truck_count(self, truck_list, index_truck, truck_count_set):
+        length = len(truck_list)
+        for i in range(length):
+            index = (index_truck + i) % length
+            truck_count = truck_list[index]
+            if truck_count not in truck_count_set:
+                return truck_count
+        return 0
+
     # 基因转换为具体方案
     def __gene_to_plan(self, individual):
         plan = {}
+        data = copy.deepcopy(self.data)
+        truck_count_set = set()
         for index in range(len(self.key_order)):
             gene_num = individual[index]
             order_ = self.key_order[index]
-            truck_list = self.data[order_]
-            truck_count = truck_list[gene_num % len(truck_list)]
+            truck_list = data[order_]
+            index_truck = gene_num % len(truck_list)
+            truck_count = self.__get_truck_count(truck_list, index_truck, truck_count_set)
             # id为0，则无truck
             if not truck_count:
                 continue
+            truck_count_set.add(truck_count)
             truck = self.truck_data[truck_count]
             if truck not in plan:
                 plan[truck] = []
@@ -222,12 +243,12 @@ class TruckScheduling(TruckPreProcess, DeapScoopGA):
             if not plan[truck] or len(plan[truck]) == 0:
                 continue
             if len(plan[truck]) > self.get_truck_type(truck):
-                return self.MAX
+                return self.MAX,
             value += self.__get_truck_take_orders(truck, plan[truck])
             if value >= self.MAX:
-                return value
+                return value,
         value += self.__get_order_cost(individual)
-        return value
+        return value,
 
     def get_data(self):
         self.set_data()
