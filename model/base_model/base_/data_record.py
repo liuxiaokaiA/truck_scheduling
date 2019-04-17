@@ -1,13 +1,30 @@
 # coding: utf-8
 
 # coding: utf-8
+import time
+
 import xlwt
 import logging
 import os
 
-from model.base.utils import model_time_to_date_time
+from global_data import mode_start_time
 
 log = logging.getLogger('default')
+
+
+def timestamp_to_date_time(timestamp):
+    timeTuple = time.localtime(timestamp)
+    return time.strftime('%Y-%m-%d %H:%M:%S', timeTuple)[:-3]
+
+
+def data_time_to_timestamp(datetime):
+    st = time.strptime(datetime, '%Y-%m-%d %H:%M:%S')
+    return time.mktime(st)
+
+
+def model_time_to_date_time(day, hour):
+    timestamp = mode_start_time + day * 24 * 3600 + hour * 3600
+    return timestamp_to_date_time(timestamp)
 
 
 # 获取字符串长度，一个中文的长度为2
@@ -31,7 +48,7 @@ def set_width(result, worksheet):
 class Writer(object):
     def __init__(self, day):
         self.file_name = 'output/' + str(model_time_to_date_time(day, 0)[0:10]) + '.xls'
-        self.whandle = xlwt.Workbook(encoding='utf-8')
+        self.handle = xlwt.Workbook(encoding='utf-8')
         self.rows = {
             'base': 1,
             'trunk': 1,
@@ -39,10 +56,10 @@ class Writer(object):
             'statistic': 1,
         }
         self.worksheet = {
-            'base': self.whandle.add_sheet(u'网点信息'),
-            'trunk': self.whandle.add_sheet(u'车辆信息'),
-            'order': self.whandle.add_sheet(u'订单信息'),
-            'statistic': self.whandle.add_sheet(u'总计'),
+            'base': self.handle.add_sheet(u'网点信息'),
+            'trunk': self.handle.add_sheet(u'车辆信息'),
+            'order': self.handle.add_sheet(u'订单信息'),
+            'statistic': self.handle.add_sheet(u'总计'),
         }
 
     def write_data(self, name, data):
@@ -64,4 +81,4 @@ class Writer(object):
     def save(self):
         if not os.path.exists('output'):
             os.mkdir('output')
-        self.whandle.save(self.file_name)
+        self.handle.save(self.file_name)

@@ -16,7 +16,7 @@ class DataInquiry(object):
     _instance_lock = threading.Lock()
 
     def __init__(self):
-        super(DataInquiry,self).__init__()
+        super(DataInquiry, self).__init__()
         self.init_data = Init_data()
         self.base_num = self.init_data.get_base_num()
         self.destination_num = self.init_data.get_destination_num()
