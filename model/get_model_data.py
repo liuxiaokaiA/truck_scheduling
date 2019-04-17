@@ -70,10 +70,10 @@ def __get_destinations():
 
 
 def update_data():
+    for order in Orders.values():
+        order.update()
     for base in Bases.values():
         base.update_base_info(Trucks, Orders)
-    for truck in Trucks.values():
-        truck.update()
 
 
 def get_compute_data():
