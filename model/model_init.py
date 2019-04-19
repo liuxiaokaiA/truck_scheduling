@@ -3,7 +3,6 @@ import json
 
 from global_data import Bases, Destinations, Trucks, Orders
 from model.base_model.base import Base
-from model.base_model.base_.data_inquiry import DataInquiry
 from model.base_model.base_.init_data import Init_data
 from model.base_model.destination import Destination
 from model.base_model.order import Order
@@ -42,3 +41,4 @@ def model_init():
         base.update_base_info(order_list=Orders, truck_list=Trucks)
     for truck in Trucks.values():
         truck.set_data(Bases)
+

@@ -7,6 +7,7 @@ from model.base_model.base import Base
 import logging
 
 from model.base_model.base_.type import Truck_status
+from model.base_model.destination import Destination
 
 log = logging.getLogger("default")
 
@@ -76,28 +77,30 @@ class Path(object):
         for order in self.orders:
             base_list.append(Bases[order.base])
             destination_list.append(Destinations[order.destination])
-        if base_list and Bases[truck.current_base] not in base_list:
+        if Bases[truck.current_base] not in base_list:
             position_list.append(Bases[truck.current_base])
         position_list = position_list + base_list + destination_list
+        self.path = position_list
+        self.future_base = position_list[-1].nearest_base
         all_list = []
         if len(position_list) < 11:
             for temp_list in permutations(position_list[1:]):
-                all_list.append(position_list[0:1] + list(temp_list))
-        min_cost = sys.maxint
-        min_path = []
-
-        for index, current_list in enumerate(all_list):
-            if index > 10000:
-                break
+                if isinstance(temp_list[-1], Destination):
+                    all_list.append(position_list[0:1] + list(temp_list))
+        min_cost = self.calculate_cost_by_path(truck_id, position_list)
+        min_path = position_list
+        for current_list in all_list:
             future_base, current_cost = self.calculate_cost_by_path(truck_id, current_list)
             if current_cost < min_cost:
                 min_cost = current_cost
                 min_path = current_list
                 self.future_base = future_base
         self.path = min_path
+        self.calculate_truck_time()
 
     def calculate_truck_time(self):
         self.times = []
+        print self.future_base, self.path
         for index, position in enumerate(self.path):
             if index == 0:
                 self.times.append(self.now)
@@ -126,11 +129,12 @@ class Path(object):
                 for order in temp_order_list:
                     if order.destination == position.id:
                         temp_order_list.remove(order)
+
+        future_base = position_list[-1].nearest_base
         if temp_order_list:
             log.error("there some order not arrive destination")
-            return None, sys.maxint
-        future_base = position_list[-1].nearest_base
-        cost += position_list[-1].calculate_distance(Bases[future_base])*Path.truck_cost(car_number=0)
+            return future_base, sys.maxint
+        cost += position_list[-1].calculate_distance(Bases[future_base]) * Path.truck_cost(car_number=0)
         return future_base, cost
 
     @staticmethod
