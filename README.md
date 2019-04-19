@@ -4,7 +4,7 @@ Truck_Scheduling
 Run
 ---
 
-    python -m scoop --hostfile hosts -vv -n 1 main.py
+    python main.py
 
 Testing
 -------

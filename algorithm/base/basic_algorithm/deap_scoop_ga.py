@@ -49,6 +49,10 @@ class DeapScoopGA(object):
 
     # 抽象函数，放到派生类中实现
     def evaluate_gene(self, individual):
+        return sum(individual),
+        # raise NotImplementedError
+
+    def evaluate_gene_loop(self, individual):
         raise NotImplementedError
 
     def cxTwoPointCopy(self, ind1, ind2):
@@ -102,8 +106,6 @@ class DeapScoopGA(object):
         stats.register("std", numpy.std)
         stats.register("min", numpy.min)
         stats.register("max", numpy.max)
-        self.toolbox.register("algorithm", algorithms.eaSimple, toolbox=self.toolbox, cxpb=self.cxpb,
-                              mutpb=self.mutpb, ngen=self.FREQ, stats=stats, verbose=False)
 
     def migRing(self, populations, k, selection, replacement=None, migarray=None):
         nbr_demes = len(populations)
@@ -129,16 +131,20 @@ class DeapScoopGA(object):
 
     def evolution_loop(self):
         # 注册map，调用scoop多进程进行计算
+        # self.toolbox.unregister("evaluate")
+        # self.toolbox.register("evaluate", self.evaluate_gene_loop)
         self.toolbox.register("map", futures.map)
+        self.toolbox.register("algorithm", algorithms.eaSimple, toolbox=self.toolbox, cxpb=self.cxpb,
+                              mutpb=self.mutpb, ngen=self.FREQ, verbose=False)
         for i in range(0, self.NGEN, self.FREQ):
-            log.info('count: %d' % i)
+            log.info('evolution loop times: %d' % i)
             results = self.toolbox.map(self.toolbox.algorithm, self.islands)
             self.islands = [pop for pop, logbook in results]
             self.migRing(self.islands, 15, tools.selBest)
             best = self.get_best_gene()
             if best is not None:
                 log.info('best gene: %s' % str(best.fitness.values))
-                log.info('best gene: %s' % str(self._TruckScheduling__gene_to_plan(best)))
+                # log.info('best gene: %s' % str(self.gene_to_plan(best)))
 
     def get_best_gene(self):
         bests = []

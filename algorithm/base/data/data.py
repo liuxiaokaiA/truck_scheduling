@@ -32,9 +32,6 @@ class Base(object):
     def get_base_near_dest(self, base):
         return self.bases[base]['near_dest']
 
-    # def get_other_truck(self, base):
-    #     return self.bases[base]['other_truck']
-
     def get_local_truck(self, base):
         return self.bases[base]['local_truck']
 
@@ -169,14 +166,14 @@ class Data(Base, Truck, Order, Destination, Rule):
         # truck附近的网点的订单
         for truck_id in truck_max_order:
             # print 'truck_id: %d' % truck_id
-            bases = self.get_truck_near_base(truck_id)
+            # bases = self.get_truck_near_base(truck_id)
             if truck_id not in truck_order:
                 truck_order[truck_id] = []
-            for base in bases:
-                # print 'base: %d' % base_id
-                orders = self.get_base_orders(base)
-                for order in orders:
-                    truck_order[truck_id].append(order)
+            # for base in bases:
+            #     # print 'base: %d' % base_id
+            #     orders = self.get_base_orders(base)
+            #     for order in orders:
+            #         truck_order[truck_id].append(order)
             # 大于10天，1000公里内的运
             for order in order_must_take:
                 base = self.get_order_base(order)
@@ -200,3 +197,5 @@ class Data(Base, Truck, Order, Destination, Rule):
                     order_data[order_id].append(truck_count)
                 truck_count += 1
         return truck_data, order_data
+
+compute_data = Data()
