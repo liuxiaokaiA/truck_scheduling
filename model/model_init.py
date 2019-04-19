@@ -41,4 +41,4 @@ def model_init():
     for base in Bases.values():
         base.update_base_info(order_list=Orders, truck_list=Trucks)
     for truck in Trucks.values():
-        truck.update(Bases)
+        truck.set_data(Bases)
