@@ -13,6 +13,7 @@ class Order(object):
         self.truck = None
         self.not_to_send = False
         self.set_delay_time()
+        self.trunk_id = None
 
     def update(self):
         self.delay_time = self.delay_time + 1

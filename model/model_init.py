@@ -3,7 +3,6 @@ import json
 
 from global_data import Bases, Destinations, Trucks, Orders
 from model.base_model.base import Base
-from model.base_model.base_.data_inquiry import DataInquiry
 from model.base_model.base_.init_data import Init_data
 from model.base_model.destination import Destination
 from model.base_model.order import Order
@@ -15,6 +14,8 @@ def init_order():
     for order_ in data:
         id_, base, destination, delay_time, class_of_delay_time = order_
         new_order = Order(id_, base, destination, delay_time)
+        if Bases[base].calculate_distance(Destinations[destination]) < 50:
+            continue
         Orders[id_] = new_order
     return data
 
@@ -42,3 +43,4 @@ def model_init():
         base.update_base_info(order_list=Orders, truck_list=Trucks)
     for truck in Trucks.values():
         truck.set_data(Bases)
+

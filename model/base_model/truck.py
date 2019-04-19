@@ -18,10 +18,6 @@ class Truck(Path, Position, TruckInquiryAPI):
         self.history = {}
         # 板车顺数订单信息
         self.orders = []
-        # 板车运输路线信息
-        self.city_list = []
-        # 板车预计到达时间
-        self.time_list = []
         #  附近网点
         self.near_base = []
 

@@ -4,7 +4,7 @@ import logging
 from model.model_init import model_init
 from algorithm.truck_scheduling import TruckScheduling
 from log import MyLogging
-
+from model.output import write_excel
 
 log = logging.getLogger("debug")
 
@@ -22,8 +22,12 @@ def compute():
     log.info("compute end")
 
 
-def output():
+def update():
     pass
+
+
+def output():
+    write_excel(0)
 
 
 if __name__ == "__main__":
@@ -31,3 +35,4 @@ if __name__ == "__main__":
     log = logging.getLogger('default')
     init()
     compute()
+    output()

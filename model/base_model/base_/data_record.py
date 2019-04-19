@@ -51,13 +51,13 @@ class Writer(object):
         self.handle = xlwt.Workbook(encoding='utf-8')
         self.rows = {
             'base': 1,
-            'trunk': 1,
+            'truck': 1,
             'order': 1,
             'statistic': 1,
         }
         self.worksheet = {
             'base': self.handle.add_sheet(u'网点信息'),
-            'trunk': self.handle.add_sheet(u'车辆信息'),
+            'truck': self.handle.add_sheet(u'车辆信息'),
             'order': self.handle.add_sheet(u'订单信息'),
             'statistic': self.handle.add_sheet(u'总计'),
         }
