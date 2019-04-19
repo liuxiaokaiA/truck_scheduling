@@ -77,6 +77,8 @@ class Path(object):
         for order in self.orders:
             base_list.append(Bases[order.base])
             destination_list.append(Destinations[order.destination])
+        base_list = list(set(base_list))
+        destination_list = list(set(destination_list))
         if Bases[truck.current_base] not in base_list:
             position_list.append(Bases[truck.current_base])
         position_list = position_list + base_list + destination_list
@@ -100,13 +102,12 @@ class Path(object):
 
     def calculate_truck_time(self):
         self.times = []
-        print self.future_base, self.path
         for index, position in enumerate(self.path):
             if index == 0:
                 self.times.append(self.now)
             else:
                 self.times.append(self.times[-1] + position.calculate_distance(self.path[index - 1]) / self.speed)
-        self.times.append(self.path[-1].calculate_distance(Bases[self.future_base]))
+        self.times.append(self.times[-1]+self.path[-1].calculate_distance(Bases[self.future_base]) /self.speed)
 
     def calculate_cost_by_path(self, truck_id, position_list):
         """
@@ -157,6 +158,8 @@ class Path(object):
         for order in order_list:
             temp_base.append(Bases[order.base])
             temp_dest.append(Destinations[order.destination])
+        temp_base = list(set(temp_base))
+        temp_dest = list(set(temp_base))
         path += temp_base
         path += temp_dest
         temp_order_list = []
@@ -194,6 +197,9 @@ class Path(object):
         for order in order_list:
             temp_base.append(Bases[order.base])
             temp_dest.append(Destinations[order.destination])
+        temp_base = list(set(temp_base))
+        temp_dest = list(set(temp_base))
+
         path += temp_base
         path += temp_dest
         temp_order_list = []

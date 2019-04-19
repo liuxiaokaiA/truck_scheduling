@@ -14,6 +14,8 @@ def init_order():
     for order_ in data:
         id_, base, destination, delay_time, class_of_delay_time = order_
         new_order = Order(id_, base, destination, delay_time)
+        if Bases[base].calculate_distance(Destinations[destination]) < 50:
+            continue
         Orders[id_] = new_order
     return data
 

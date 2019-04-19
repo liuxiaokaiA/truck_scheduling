@@ -68,7 +68,7 @@ def write_truck(writer, day):
                 truck_state = u'本地等计划'
             else:
                 truck_state = u'异地等计划'
-            position = Bases[truck.current_base]
+            position = Bases[truck.current_base].name
             temp_list = [id, fleet, truck_base, truck_state, position, target_position, target_time, orders[0],
                          orders[1],
                          orders[2], orders[3], orders[4], orders[5], orders[6], orders[7], orders[8], orders[9],
@@ -93,7 +93,7 @@ def write_truck(writer, day):
                     if isinstance(truck.path[index_position - 1], Base):
                         flag = False
                         for order in truck.orders:
-                            if order.base == truck.path[index_position - 1]:
+                            if order.base == truck.path[index_position - 1].id:
                                 flag = True
                         if flag:
                             target_position = u'提货网点 : ' + truck.path[index_position - 1].name
@@ -107,23 +107,22 @@ def write_truck(writer, day):
                         for order_index, order in enumerate(truck.orders):
                             if order.destination == truck.path[index_position - 1].id:
                                 orders[order_index] = u"卸载"
-                    target_time = truck.times[index_position - 1]
+                    target_time = model_time_to_date_time(day, truck.times[index_position - 1])
                     temp_list = ['', '', '', '', '', target_position, target_time, orders[0],
                                  orders[1], orders[2], orders[3], orders[4], orders[5], orders[6], orders[7], orders[8],
                                  orders[9], orders[10], orders[11], orders[12], orders[13], orders[14]]
                     all_list.append(temp_list)
                 if index_position == (len(truck.path) + 1):
                     target_position = u"入库网点 : " + Bases[truck.future_base].name
-                    target_time = truck.times[-1]
+                    target_time = model_time_to_date_time(day, truck.times[-1])
                     orders = [u''] * 15
                     temp_list = ['', '', '', '', '', target_position, target_time, orders[0],
                                  orders[1], orders[2], orders[3], orders[4], orders[5], orders[6], orders[7], orders[8],
                                  orders[9], orders[10], orders[11], orders[12], orders[13], orders[14]]
                     all_list.append(temp_list)
 
-        print all_list
         l += all_list
-        writer.write_data('truck', l)
+    writer.write_data('truck', l)
 
 
 def write_order(writer, day):
@@ -149,22 +148,30 @@ def write_order(writer, day):
 
 
 def write_statistic(writer, day):
-    # statistic_title = [u'         ', u'等计划', u'运输中(提货)', u'总计',
-    #                    u'', u'', u'压板订单（1-5）', u'压板订单（5-10）',
-    #                    u'压板订单（10-?）', u'总计']
-    # writer.write_title('statistic', statistic_title)
-    # global other_wait, other_run, local_wait, local_run
-    # global wait_1, wait_2, wait_3
-    # content = [[u'异地', other_wait, other_run, other_wait + other_run, '',
-    #             u'总订单', orders_1, orders_2, orders_3, orders_1 + orders_2 + orders_3],
-    #            [u'本地', local_wait, local_run, local_run + local_wait, '',
-    #             u'未派单', wait_1, wait_2, wait_3, wait_1 + wait_2 + wait_3],
-    #            [u'总计', other_wait + local_wait, other_run + local_run,
-    #             other_wait + other_run + local_run + local_wait, '',
-    #             u'今日派单', orders_1 - wait_1, orders_2 - wait_2, orders_3 - wait_3,
-    #             orders_1 + orders_2 + orders_3 - (wait_1 + wait_2 + wait_3)]]
-    # writer.write_data('statistic', content)
-    pass
+    statistic_title = [u'等计划', u'运输中(提货)', u'总计',
+                       u'压板订单（1-5）', u'压板订单（5-10）',
+                       u'压板订单（10-?）', u'总计']
+    writer.write_title('statistic', statistic_title)
+    truck_wait = 0
+    truck_on_road = 0
+    order_delay1 = 0
+    order_delay2 = 0
+    order_delay3 = 0
+    for truck in Trucks.values():
+        if truck.status in (Truck_status.TRUCK_IN_ORDER_DESTINATION, Truck_status.TRUCK_IN_ORDER):
+            truck_wait += 1
+        else:
+            truck_on_road += 1
+    for order in Orders.values():
+        if order.trunk_id is None and order.class_of_delay_time == 1:
+            order_delay1 += 1
+        elif order.trunk_id is None and order.class_of_delay_time == 2:
+            order_delay2 += 1
+        if order.trunk_id is None and order.class_of_delay_time == 3:
+            order_delay3 += 1
+    l = [[truck_wait, truck_on_road, truck_wait + truck_on_road, order_delay1, order_delay2, order_delay3,
+         order_delay3 + order_delay2 + order_delay1]]
+    writer.write_data('statistic', l)
 
 
 def write_excel(day):
@@ -172,23 +179,5 @@ def write_excel(day):
     write_base(writer, day)
     write_truck(writer, day)
     write_order(writer, day)
-    # write_statistic(writer, day)
+    write_statistic(writer, day)
     writer.save()
-
-
-class Solution:
-    def InversePairs(self, data):
-        if len(data) == 0 or len(data) == 1:
-            return 0
-        dp = []
-        for index, i in enumerate(data):
-            if index in (0, 1):
-                dp.append(0)
-                continue
-            temp_number = 0
-            for j in range(index):
-                if data[index] > data[j]:
-                    temp_number += 1
-                dp.append(dp[-1] + temp_number)
-
-        return dp[-1]
