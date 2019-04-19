@@ -7,6 +7,7 @@
 import logging
 
 from model.modify_model import model_truck_take_orders
+from algorithm.base.data.data import compute_data
 
 
 log = logging.getLogger('debug')
@@ -22,20 +23,20 @@ class ModelProcess(object):
         if not result:
             log.error('truck_take_orders error! truck: %d, orders: %s' % (truck, str(del_order)))
             return result
-        base = self.get_truck_current_base(truck)
+        base = compute_data.get_truck_current_base(truck)
         # 删除操作应与model操作一致
         # 删除base中的truck
         # 函数在compute_data文件中
-        self.remove_truck_in_base(base, truck)
+        compute_data.remove_truck_in_base(base, truck)
         # 删除base中的order,可能不是truck的base
-        self.remove_orders_in_base(del_order)
+        compute_data.remove_orders_in_base(del_order)
 
         log.info('count : %d , truck: %s, del_order: %s.' % (self.count, str(truck), str(del_order)))
         self.count += 1
         return result
 
     def __get_truck_to_work(self, base, type, all_orders):
-        truck = self.get_truck_to_use(base)
+        truck = compute_data.get_truck_to_use(base)
         if truck is None:
             return False
         if type < len(all_orders):
@@ -47,9 +48,9 @@ class ModelProcess(object):
 
     def get_truck_from_base(self, base, orders):
         while 1:
-            if len(orders) >= self.min_take:
-                if self.__get_truck_to_work(base, self.min_take, orders):
-                    orders = orders[self.min_take:]
+            if len(orders) >= compute_data.min_take:
+                if self.__get_truck_to_work(base, compute_data.min_take, orders):
+                    orders = orders[compute_data.min_take:]
                     # self.update_single_process(base)
                 else:
                     break
