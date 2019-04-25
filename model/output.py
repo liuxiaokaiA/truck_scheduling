@@ -32,6 +32,8 @@ def write_base(writer, day):
         delay_2 = 0
         delay_3 = 0
         for order in base.orders:
+            if order.trunk_id is not None:
+                continue
             if order.class_of_delay_time == 1:
                 delay_1 += 1
             elif order.class_of_delay_time == 2:

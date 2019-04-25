@@ -9,7 +9,7 @@ import logging
 from model.base_model.base_.type import Truck_status
 from model.base_model.destination import Destination
 
-log = logging.getLogger("default")
+log = logging.getLogger('debug')
 
 
 def calculate_cost_by_path(truck_id, position_list, order_list):
@@ -29,7 +29,7 @@ def calculate_cost_by_path(truck_id, position_list, order_list):
                 if order.destination == position.d_id:
                     temp_order_list.remove(order)
     if temp_order_list:
-        log.error("there some order not arrive destination")
+        # log.error("there some order not arrive destination")
         return sys.maxint
     if truck.status == Truck_status.TRUCK_IN_ORDER:
         future_base = position_list[-1].nearest_base
@@ -133,7 +133,7 @@ class Path(object):
 
         future_base = position_list[-1].nearest_base
         if temp_order_list:
-            log.error("there some order not arrive destination")
+             # log.error("there some order not arrive destination")
             return future_base, sys.maxint
         cost += position_list[-1].calculate_distance(Bases[future_base]) * Path.truck_cost(car_number=0)
         return future_base, cost
@@ -159,7 +159,7 @@ class Path(object):
             temp_base.append(Bases[order.base])
             temp_dest.append(Destinations[order.destination])
         temp_base = list(set(temp_base))
-        temp_dest = list(set(temp_base))
+        temp_dest = list(set(temp_dest))
         path += temp_base
         path += temp_dest
         temp_order_list = []
@@ -173,12 +173,12 @@ class Path(object):
             if isinstance(position, Base):
                 for order in order_list:
                     if order.base == position.id:
-                        if len(temp_order_list) < 8:
-                            temp_order_list.append(order)
+                        temp_order_list.append(order)
             else:
                 for order in temp_order_list:
                     if order.destination == position.id:
                         temp_order_list.remove(order)
+        # log.info('current cost: %d' % cost)
         return cost
 
     @staticmethod
